@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Natal em Gramado e Canela 2026</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: cabeçalho curto + barra de dias fixa + uma linha do tempo vertical por dia (horário à esquerda, evento à direita) */
+:root{
+  --bg:#F3F6F4; --surface:#FFFFFF; --ink:#14251D; --muted:#56675E; --line:#D5DED8;
+  --pine:#1E5A41; --pine-soft:#E2EEE7; --holly:#B42A22; --holly-soft:#FBE7E4;
+  --gold:#9A6B12; --gold-soft:#F7EEDB; --sky:#2B5C86; --sky-soft:#E3EDF6;
+  --f-display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1813; --surface:#16231C; --ink:#E6EEE9; --muted:#9DB0A5; --line:#2A3B32;
+  --pine:#6CC59A; --pine-soft:#1C3328; --holly:#F08A80; --holly-soft:#3A1F1C;
+  --gold:#E2B85C; --gold-soft:#33291A; --sky:#8DBBE6; --sky-soft:#1A2A38; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1813; --surface:#16231C; --ink:#E6EEE9; --muted:#9DB0A5; --line:#2A3B32;
+  --pine:#6CC59A; --pine-soft:#1C3328; --holly:#F08A80; --holly-soft:#3A1F1C;
+  --gold:#E2B85C; --gold-soft:#33291A; --sky:#8DBBE6; --sky-soft:#1A2A38; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:880px;margin:0 auto;padding-block:28px 56px}
+a{color:var(--pine)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+
+header h1{font-family:var(--f-display);font-weight:800;font-size:clamp(30px,6vw,46px);line-height:1.05;margin:6px 0 10px;text-wrap:balance;letter-spacing:-.01em}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--pine);font-weight:600}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--muted);font-size:15px;margin:0}
+.meta span{white-space:nowrap}
+
+.fix{margin-top:22px;background:var(--holly-soft);border:1px solid color-mix(in srgb,var(--holly) 35%,transparent);border-radius:12px;padding:16px 18px}
+.fix h2{font-family:var(--f-display);font-size:19px;margin:0 0 8px;color:var(--holly)}
+.fix ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.fix li{font-size:15px}
+.fix b{font-weight:700}
+
+.resv{margin-top:22px;background:var(--holly-soft);border-radius:12px;padding:16px 18px}
+.resv h2{font-family:var(--f-display);font-size:19px;margin:0 0 8px;color:var(--holly)}
+.resv ul{margin:0;padding-left:20px;display:grid;gap:4px;font-size:15px}
+.resv p{margin:8px 0 0;font-size:14px;color:var(--muted)}
+nav.days{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);margin:26px calc(-1*max(16px,env(safe-area-inset-left,0px))) 0;padding:10px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line);
+  display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+nav.days::-webkit-scrollbar{display:none}
+nav.days a{flex:0 0 auto;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:baseline}
+nav.days a small{font-family:var(--f-mono);font-size:11px;color:var(--muted);font-weight:500}
+
+section.day{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 70px);margin-top:34px}
+.dayhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:8px}
+.dayhead .date{font-family:var(--f-display);font-weight:800;font-size:34px;line-height:1}
+.dayhead .wk{font-family:var(--f-mono);font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.dayhead h2{flex:1 1 260px;min-width:0;margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;text-wrap:balance}
+
+ol.tl{list-style:none;margin:0;padding:0}
+ol.tl li{display:grid;grid-template-columns:104px 1fr;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.t{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:14px;font-weight:600;color:var(--ink);padding-top:2px}
+.t small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+.ev{min-width:0}
+.ev h3{margin:0;font-size:17px;font-weight:700;line-height:1.3;display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.ev p{margin:4px 0 0;color:var(--muted);font-size:15px}
+.ev p.note{color:var(--holly);font-size:14px}
+.tag{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.tag.show{background:var(--gold-soft);color:var(--gold)}
+.tag.free{background:var(--pine-soft);color:var(--pine)}
+.tag.fix{background:var(--holly-soft);color:var(--holly);border:0;margin:0;padding:2px 7px}
+.tag.food{background:var(--sky-soft);color:var(--sky)}
+li.move .t,li.move .ev h3{color:var(--muted);font-weight:600}
+li.move .ev h3{font-size:15px}
+li.key{background:linear-gradient(90deg,var(--gold-soft),transparent 70%);border-radius:8px;padding-left:8px;padding-right:8px;margin-inline:-8px}
+
+.tips{margin-top:40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.tips div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.tips h3{margin:0 0 4px;font-family:var(--f-display);font-size:17px}
+.tips p{margin:0;font-size:15px;color:var(--muted)}
+.ev p.links{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ev p.links a{font-size:13px;font-weight:600;text-decoration:none;color:var(--pine);background:var(--pine-soft);border-radius:999px;padding:3px 10px}
+.ev p.links a:hover{text-decoration:underline}
+.ev p.warn{margin-top:8px;color:var(--holly);background:var(--holly-soft);border-radius:6px;padding:6px 10px;font-size:14px;font-weight:600}
+li.reserve .ev h3::after{content:"Reservar antes";font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:var(--holly-soft);color:var(--holly)}
+.src{margin-top:34px;font-size:13px;color:var(--muted)}
+.src h2{font-family:var(--f-display);font-size:16px;color:var(--ink);margin:0 0 6px}
+.src ul{padding-left:18px;margin:0;display:grid;gap:3px}
+.src a{word-break:break-word}
+
+@media (max-width:520px){
+  ol.tl li{grid-template-columns:78px 1fr;gap:10px}
+  .t{font-size:13px}
+  .dayhead .date{font-size:28px}
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Roteiro revisado · 17 a 22 de dezembro de 2026</div>
+  <h1>Natal em Gramado e Canela</h1>
+  <p class="meta"><span>2 adultos</span><span>13 anos</span><span>5 anos</span><span>bebê de 11 meses</span><span>Airbnb + carro próprio</span></p>
+
+  <div class="resv">
+    <h2>Reserve com antecedência</h2>
+    <ul>
+      <li><b>Era do Fogo</b>, 19/12 às 18h: reserva obrigatória.</li>
+      <li><b>Famiglia Pierre</b>, 21/12 às 21h15: voucher com horário marcado.</li>
+      <li><b>Kongo Pizzaria</b>, 18/12 às 21h: mesa reservada evita a fila.</li>
+      <li><b>Di Paolo</b>, 19/12 às 11h30: sábado é o dia mais cheio.</li>
+      <li><b>Bela Vista Café Colonial</b>, 22/12 às 11h: ingresso online.</li>
+      <li><b>Churrascaria em Canela</b>, 18/12 às 12h30.</li>
+    </ul>
+    <p>Ingressos já necessários: Maria Fumaça, Brilho de Natal, Grande Desfile e Nativitaten.</p>
+  </div>
+</header>
+
+<nav class="days" aria-label="Dias da viagem">
+  <a href="#d17">17 <small>qui</small></a>
+  <a href="#d18">18 <small>sex</small></a>
+  <a href="#d19">19 <small>sáb</small></a>
+  <a href="#d20">20 <small>dom</small></a>
+  <a href="#d21">21 <small>seg</small></a>
+  <a href="#d22">22 <small>ter</small></a>
+</nav>
+
+<!-- 17 -->
+<section class="day" id="d17">
+  <div class="dayhead"><span class="date">17/12</span><span class="wk">quinta</span><h2>Chegada, mercado e noite em casa</h2></div>
+  <ol class="tl">
+    <li><div class="t">16:00<small>até 17:00</small></div><div class="ev"><h3>Chegada em Gramado e check-in no Airbnb</h3><p>Acomodar malas, bebê e crianças.</p></div></li>
+    <li><div class="t">17:15<small>até 18:30</small></div><div class="ev"><h3>Supermercado</h3><p>Mantimentos, papinhas, fraldas e itens para cozinhar no Airbnb durante a semana.</p></div></li>
+    <li><div class="t">18:30<small>até 20:00</small></div><div class="ev"><h3>Jantar caseiro e descanso</h3></div></li>
+    <li><div class="t">20:00<small>opcional</small></div><div class="ev"><h3>O Despertar das Luzes <span class="tag free">Gratuito</span></h3><p>Show de acendimento em frente ao Palácio dos Festivais. Só se a turma ainda tiver energia.</p><p class="links"><a href="https://natalluz.ingressos.com.br/programacao" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/natalluzoficial/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Pal%C3%A1cio%20dos%20Festivais%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
+  </ol>
+</section>
+
+<!-- 18 -->
+<section class="day" id="d18">
+  <div class="dayhead"><span class="date">18/12</span><span class="wk">sexta</span><h2>Florybal, SkyGlass, Papai Noel e Kongo</h2></div>
+  <ol class="tl">
+    <li class="move"><div class="t">08:45</div><div class="ev"><h3>Gramado → Florybal (Canela), 20 a 30 min</h3></div></li>
+    <li><div class="t">09:15<small>até 12:15</small></div><div class="ev"><h3>Parque Terra Mágica Florybal</h3><p>Abre às 9h. Visita completa leva cerca de 2h30 a 3h. Há aluguel de carrinho de bebê no parque.</p><p class="links"><a href="https://www.instagram.com/parqueterramagicaflorybal/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Parque%20Terra%20M%C3%A1gica%20Florybal%20Canela" target="_blank" rel="noopener">Mapa</a></p></div></li>
+    <li class="move"><div class="t">12:15</div><div class="ev"><h3>Deslocamento até o centro de Canela, 15 min</h3></div></li>
+    <li><div class="t">12:30<small>até 14:00</small></div><div class="ev"><h3>Almoço em churrascaria <span class="tag food">Almoço</span></h3><p>Garfo e Bombacha ou Espelho Gaúcho. Confirme o horário do almoço na reserva.</p><p class="warn">Reserve com antecedência: em dezembro as churrascarias de Canela lotam no almoço.</p><p class="links"><a href="https://www.instagram.com/garfoebombacha/" target="_blank" rel="noopener">Instagram Garfo e Bombacha</a><a href="https://www.google.com/maps/search/?api=1&query=Churrascaria%20Garfo%20e%20Bombacha%20Canela" target="_blank" rel="noopener">Mapa</a></p></div></li>
+    <li class="move"><div class="t">14:00</div><div class="ev"><h3>Canela → SkyGlass, 20 min</h3></div></li>
+    <li><div class="t">14:30<small>até 16:45</small></div><div class="ev"><h3>SkyGlass Canela</h3><p>Funciona das 9h às 18h. Plataforma de vidro sobre o Vale da Ferradura. Para o bebê, prefira o canguru.</p><p class="links"><a href="https://www.instagram.com/skyglasscanela/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Skyglass%20Canela" target="_blank" rel="noopener">Mapa</a></p></div></li>
+    <li class="move"><div class="t">16:45</div><div class="ev"><h3>SkyGlass → Airbnb em Gramado, 30 a 40 min</h3></div></li>
+    <li><div class="t">17:30<small>até 19:15</small></div><div class="ev"><h3>Descanso no Airbnb</h3><p>Banho, troca de roupa e um lanche para as crianças, já que o jantar será mais tarde.</p></div></li>
+    <li class="move"><div class="t">19:15</div><div class="ev"><h3>Gramado → Catedral de Pedra, Canela, cerca de 30 min com trânsito de dezembro</h3></div></li>
+    <li><div class="t">19:45<small>até 20:30</small></div><div class="ev"><h3>Chegada à Catedral de Pedra</h3><p>Chegue cedo para ficar de frente para a fachada. Às 20h há o show de luzes e som das Casas Cantantes no Sonho de Natal.</p><p class="links"><a href="https://sonhodenatal.com.br/" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/sonhodenataloficial/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Catedral%20de%20Pedra%20Canela" target="_blank" rel="noopener">Mapa</a></p></div></li>
+    <li class="key"><div class="t">20:30<small>até 20:45</small></div><div class="ev"><h3>Descida do Papai Noel de rapel <span class="tag free">Gratuito</span></h3><p>Espetáculo “Contos da Catedral: O Segredo do Velho Noel”, com cerca de 15 min.</p><p class="links"><a href="https://sonhodenatal.com.br/" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/sonhodenataloficial/" target="_blank" rel="noopener">Instagram</a></p></div></li>
+    <li class="move"><div class="t">20:50</div><div class="ev"><h3>Catedral → Kongo Pizzaria, cerca de 15 min</h3><p>A Kongo fica na Av. das Hortênsias, no caminho de volta para Gramado.</p></div></li>
+    <li><div class="t">21:05<small>até 22:35</small></div><div class="ev"><h3>Jantar na Kongo Pizzaria <span class="tag food">Jantar</span></h3><p>Av. das Hortênsias, 5683, aberta até 23h30. Reserve mesa para 21h. Vocês pegam o show com personagens das 22h. Crianças até 4 anos não pagam.</p><p class="warn">Reserve com antecedência: sem reserva, o atendimento é por ordem de chegada e pode haver fila no Natal Luz.</p><p class="links"><a href="https://www.kongogramado.com.br/" target="_blank" rel="noopener">Site oficial</a><a href="https://www.google.com/maps/search/?api=1&query=Kongo%20Pizzaria%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
+    <li class="move"><div class="t">22:35</div><div class="ev"><h3>Retorno ao Airbnb, 10 a 15 min</h3></div></li>
+  </ol>
+</section>
+
+<!-- 19 -->
+<section class="day" id="d19">
+  <div class="dayhead"><span class="date">19/12</span><span class="wk">sábado</span><h2>Maria Fumaça em Bento, Era do Fogo e Rua Coberta</h2></div>
+  <ol class="tl">
+    <li class="move"><div class="t">06:00</div><div class="ev"><h3>Saída de carro: Gramado → Bento Gonçalves, cerca de 110 km, 2h a 2h30</h3><p>Café da manhã no carro e bebê no bebê conforto.</p></div></li>
+    <li><div class="t">08:15<small>até 08:45</small></div><div class="ev"><h3>Estação Férrea de Bento Gonçalves</h3><p>Rua Duque de Caxias, 286. Retirada dos bilhetes e recepção na estação.</p><p class="links"><a href="https://giordaniturismo.com.br/" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/giordani_turismo/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Esta%C3%A7%C3%A3o%20F%C3%A9rrea%20Bento%20Gon%C3%A7alves%20Maria%20Fuma%C3%A7a" target="_blank" rel="noopener">Mapa</a></p></div></li>
+    <li class="key"><div class="t">09:00<small>até 10:30</small></div><div class="ev"><h3>Maria Fumaça Bento → Carlos Barbosa <span class="tag show">Ingresso</span></h3><p>Primeiro trem do dia, só o passeio de Maria Fumaça. Cerca de 1h30, com parada de cerca de 20 min em Garibaldi. Em dezembro o trem opera de terça a domingo. Crianças pequenas no colo não pagam assento.</p><p class="links"><a href="https://giordaniturismo.com.br/passeios/nossos-horarios/" target="_blank" rel="noopener">Horários</a></p></div></li>
+    <li class="move"><div class="t">10:30</div><div class="ev"><h3>Ônibus de Carlos Barbosa de volta à estação de Bento, incluso no bilhete, cerca de 30 min</h3><p>O carro fica estacionado em Bento, perto da estação.</p></div></li>
+    <li class="move"><div class="t">11:05</div><div class="ev"><h3>Estação → Di Paolo, Bento centro, cerca de 10 min de carro</h3></div></li>
+    <li><div class="t">11:30<small>até 13:00</small></div><div class="ev"><h3>Almoço no Di Paolo <span class="tag food">Almoço</span></h3><p>Restaurante tradicional de Bento, perto do Pipa Pórtico, com sequência de galeto, massas, polenta e sopa de capeletti. Abre às 11h30; chegando na abertura, vocês evitam a fila do sábado.</p><p class="warn">Reserve com antecedência por telefone: sábado ao meio-dia é o horário mais cheio.</p><p class="links"><a href="https://www.google.com/maps/search/?api=1&query=Galeto%20Di%20Paolo%20Bento%20Gon%C3%A7alves" target="_blank" rel="noopener">Mapa</a></p></div></li>
+    <li class="move"><div class="t">13:00</div><div class="ev"><h3>Retorno de carro a Gramado, 2h a 2h30</h3></div></li>
+    <li><div class="t">15:15<small>até 17:30</small></div><div class="ev"><h3>Descanso no Airbnb</h3></div></li>
+    <li class="move"><div class="t">17:30</div><div class="ev"><h3>Airbnb → Era do Fogo, 10 a 15 min</h3></div></li>
+    <li><div class="t">17:45<small>até 19:30</small></div><div class="ev"><h3>Jantar na Era do Fogo, sessão das 18h <span class="tag food">Jantar</span></h3><p>Av. das Hortênsias, 4901. Fondue temático com espetáculo interativo e espaço para crianças. Funciona com sessões às 18h e 21h, com reserva obrigatória.</p><p class="warn">Reserva obrigatória para as sessões das 18h e 21h. Reserve assim que possível, porque dezembro é alta temporada.</p><p class="links"><a href="https://eradofogo.com.br/" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/hectorstudiosbr/" target="_blank" rel="noopener">Instagram do grupo Hector Studios</a><a href="https://www.google.com/maps/search/?api=1&query=Era%20do%20Fogo%20Av.%20das%20Hort%C3%AAnsias%204901%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
+    <li class="move"><div class="t">19:30</div><div class="ev"><h3>Deslocamento ao centro de Gramado e estacionamento, 15 a 20 min</h3></div></li>
+    <li><div class="t">19:50<small>até 20:50</small></div><div class="ev"><h3>Passeio leve pela Rua Coberta</h3><p>Decoração iluminada, Praça das Etnias e Palácio dos Festivais ao lado. Retorno ao Airbnb por volta das 21h, para descansar do dia que começou cedo.</p><p class="links"><a href="https://www.google.com/maps/search/?api=1&query=Rua%20Coberta%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
+  </ol>
+</section>
+
+<!-- 20 -->
+<section class="day" id="d20">
+  <div class="dayhead"><span class="date">20/12</span><span class="wk">domingo</span><h2>Lago Negro, Mini Mundo, Lugano, Brilho de Natal e Grande Desfile</h2></div>
+  <ol class="tl">
+    <li><div class="t">09:15<small>até 10:30</small></div><div class="ev"><h3>Lago Negro</h3><p>Caminhada ao redor do lago com o carrinho e pedalinho com o adolescente. De manhã cedo o parque está mais tranquilo.</p><p class="links"><a href="https://www.google.com/maps/search/?api=1&query=Lago%20Negro%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
+    <li class="move"><div class="t">10:30</div><div class="ev"><h3>Lago Negro → Mini Mundo, 10 min</h3></div></li>
+    <li><div class="t">10:45<small>até 12:30</small></div><div class="ev"><h3>Mini Mundo</h3><p>Aberto das 9h às 17h. Caminhos planos, bom para o carrinho.</p><p class="links"><a href="https://www.minimundo.com.br/" target="_blank" rel="noopener">Site oficial</a><a href="https://www.google.com/maps/search/?api=1&query=Mini%20Mundo%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
+    <li><div class="t">12:30<small>até 13:30</small></div><div class="ev"><h3>Almoço simples no centro <span class="tag food">Almoço</span></h3></div></li>
+    <li><div class="t">13:40<small>até 14:25</small></div><div class="ev"><h3>Fábrica de Chocolate Lugano</h3><p>Visita à fábrica e à loja, com o processo do chocolate artesanal. Confirme o horário de domingo e a localização para caber antes do Brilho de Natal.</p><p class="links"><a href="https://www.chocolatelugano.com.br/" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/chocolatelugano/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Chocolate%20Lugano%20f%C3%A1brica%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
+    <li class="move"><div class="t">14:25</div><div class="ev"><h3>Deslocamento ao Palácio dos Festivais, chegada até 14h40</h3></div></li>
+    <li class="key"><div class="t">15:00<small>até 15:50</small></div><div class="ev"><h3>Brilho de Natal, Palácio dos Festivais <span class="tag show">Ingresso</span></h3><p>Chegue até 14h40: não há entrada depois do início. Sessão de cerca de 50 min, local coberto.</p><p class="links"><a href="https://natalluz.ingressos.com.br/programacao" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/natalluzoficial/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Pal%C3%A1cio%20dos%20Festivais%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
+    <li><div class="t">16:00<small>até 19:20</small></div><div class="ev"><h3>Descanso e jantar caseiro no Airbnb <span class="tag food">Jantar</span></h3><p>Jantar por volta das 18h, para sair com as crianças alimentadas antes do Desfile.</p></div></li>
+    <li class="move"><div class="t">19:20</div><div class="ev"><h3>Deslocamento ao Expogramado (Av. Borges de Medeiros, 4111), 15 a 20 min</h3></div></li>
+    <li class="key"><div class="t">20:00<small>até 21:00</small></div><div class="ev"><h3>Grande Desfile de Natal <span class="tag show">Ingresso</span></h3><p>Em 2026 é em área coberta, nos pavilhões do Expogramado. Retorno ao Airbnb por volta das 21h20.</p><p class="links"><a href="https://natalluz.ingressos.com.br/programacao" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/natalluzoficial/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Expogramado%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
+  </ol>
+</section>
+
+<!-- 21 -->
+<section class="day" id="d21">
+  <div class="dayhead"><span class="date">21/12</span><span class="wk">segunda</span><h2>Alpen Park, Bondinhos e Nativitaten</h2></div>
+  <ol class="tl">
+    <li class="move"><div class="t">09:00</div><div class="ev"><h3>Gramado → Alpen Park (Canela), 25 a 30 min</h3></div></li>
+    <li><div class="t">09:30<small>até 12:30</small></div><div class="ev"><h3>Alpen Park</h3><p>Aberto das 9h às 17h20. Em dias de semana o trenó funciona das 10h às 16h. Passaporte Kids para crianças entre 0,80 m e 1,29 m.</p><p class="links"><a href="https://www.instagram.com/alpenpark/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Alpen%20Park%20Canela" target="_blank" rel="noopener">Mapa</a></p></div></li>
+    <li><div class="t">12:30<small>até 13:45</small></div><div class="ev"><h3>Almoço em Canela <span class="tag food">Almoço</span></h3></div></li>
+    <li class="move"><div class="t">13:45</div><div class="ev"><h3>Deslocamento aos Bondinhos (Estrada do Caracol), 15 a 20 min</h3></div></li>
+    <li><div class="t">14:15<small>até 16:15</small></div><div class="ev"><h3>Parque Bondinhos Canela</h3><p>Aberto das 9h às 17h, com vista da Cascata do Caracol. Crianças de 0 a 5 anos são isentas. Pode parar em caso de chuva.</p><p class="links"><a href="https://www.instagram.com/bondinhoscanela/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Parque%20Bondinhos%20Canela" target="_blank" rel="noopener">Mapa</a></p></div></li>
+    <li class="move"><div class="t">16:15</div><div class="ev"><h3>Retorno a Gramado, 30 a 40 min</h3></div></li>
+    <li><div class="t">17:00<small>até 19:20</small></div><div class="ev"><h3>Descanso no Airbnb, banho e roupas quentes</h3><p>O Nativitaten é ao ar livre. Leve manta e gorro para o bebê.</p></div></li>
+    <li class="move"><div class="t">19:20</div><div class="ev"><h3>Deslocamento ao Serra Park, cerca de 4 km do centro, 15 a 20 min</h3></div></li>
+    <li class="key"><div class="t">20:00<small>até 21:00</small></div><div class="ev"><h3>Nativitaten, Serra Park <span class="tag show">Ingresso</span></h3><p>Show sobre o lago, a céu aberto, com cerca de 1h.</p><p class="links"><a href="https://natalluz.ingressos.com.br/programacao" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/natalluzoficial/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Serra%20Park%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
+    <li class="move"><div class="t">21:00</div><div class="ev"><h3>Deslocamento à Famiglia Pierre, 15 a 20 min</h3></div></li>
+    <li><div class="t">21:20<small>até 23:00</small></div><div class="ev"><h3>Jantar na Famiglia Pierre <span class="tag food">Jantar</span></h3><p>Av. das Hortênsias, 1720. Jantar das 18h às 23h30. Reserve para 21h15 ou 21h30.</p><p class="warn">Reserve com antecedência: a casa vende vouchers antecipados pelo site oficial dela.</p><p class="links"><a href="https://www.google.com/maps/search/?api=1&query=Famiglia%20Pierre%20Av.%20das%20Hort%C3%AAnsias%201720%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
+  </ol>
+</section>
+
+<!-- 22 -->
+<section class="day" id="d22">
+  <div class="dayhead"><span class="date">22/12</span><span class="wk">terça</span><h2>Café colonial e volta para casa</h2></div>
+  <ol class="tl">
+    <li><div class="t">09:30<small>até 10:30</small></div><div class="ev"><h3>Malas e check-out do Airbnb</h3><p>Confirme o horário de check-out com o anfitrião.</p></div></li>
+    <li class="move"><div class="t">10:45</div><div class="ev"><h3>Deslocamento ao Bela Vista, 10 min</h3></div></li>
+    <li class="key"><div class="t">11:00<small>até 12:30</small></div><div class="ev"><h3>Bela Vista Café Colonial <span class="tag food">Brunch</span></h3><p>Av. das Hortênsias, 3500. Em dias de semana abre às 11h. Funciona como almoço de despedida.</p><p class="warn">Reserve com antecedência: compre o ingresso do café colonial online para evitar fila.</p><p class="links"><a href="https://www.instagram.com/belavistacafecolonialoficial/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Bela%20Vista%20Caf%C3%A9%20Colonial%20Av.%20das%20Hort%C3%AAnsias%203500%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
+    <li><div class="t">13:00</div><div class="ev"><h3>Saída de Gramado</h3></div></li>
+  </ol>
+</section>
+
+<div class="tips">
+  <div><h3>Datas dos espetáculos</h3><p>Nesta semana o Grande Desfile acontece em 18, 20 e 22/12 e o Nativitaten em 17, 19 e 21/12, sempre às 20h. O Brilho do Natal tem sessões às 15h e 18h de sexta a domingo, e só às 18h na quinta.</p></div>
+  <div><h3>Jantar tarde no dia 18</h3><p>Como a Kongo fica depois da descida do Papai Noel, o jantar começa perto das 21h. Leve um lanche reforçado para as crianças e o bebê antes de sair para Canela.</p></div>
+  <div><h3>Trânsito de dezembro</h3><p>Os tempos de deslocamento já contam com a alta temporada. Saídas noturnas de Gramado para Canela costumam ser as mais lentas.</p></div>
+  <div><h3>Bebê de 11 meses</h3><p>Canguru para SkyGlass, Bondinhos e Florybal. Carrinho compacto para Mini Mundo, Lago Negro e Rua Coberta.</p></div>
+</div>
+
+<div class="src">
+  <h2>Fontes consultadas em 02/11/2026</h2>
+  <ul>
+    <li><a href="https://natalluz.ingressos.com.br/programacao">Programação oficial do Natal Luz</a></li>
+    <li><a href="https://sonhodenatal.com.br/">Programação oficial do Sonho de Natal de Canela</a></li>
+    <li><a href="https://giordaniturismo.com.br/passeios/nossos-horarios/">Giordani Turismo: horários da Maria Fumaça</a></li>
+    <li><a href="https://www.melhoresdestinos.com.br/gramado-novo-restaurante-tematico-famiglia-pierre.html">Famiglia Pierre: horário e endereço</a></li>
+    <li><a href="https://eradofogo.com.br/">Era do Fogo: sessões</a></li>
+    <li><a href="https://quantocustaviajar.com/blog/pizzaria-kongo-em-gramado/">Kongo Pizzaria</a></li>
+    <li><a href="https://www.grupodicas.com/onde-tomar-cafe-colonial-em-gramado/">Bela Vista Café Colonial</a></li>
+    <li><a href="https://www.buenasdicas.com/onde-comer-bento-goncalves-10670/">Di Paolo em Bento Gonçalves</a></li>
+    <li><a href="https://www.melhoresdestinos.com.br/alpen-park.html">Alpen Park</a> · <a href="https://www.viagensecaminhos.com/parque-terra-magica-florybal/">Florybal</a> · <a href="https://www.viagensecaminhos.com/skyglass-canela/">SkyGlass</a> · <a href="https://www.viagensecaminhos.com/parque-da-serra-bondinhos-aereos-canela/">Bondinhos</a> · <a href="https://www.viagensecaminhos.com/mini-mundo-o-mundo-em-miniatura-de-gramado/">Mini Mundo</a></li>
+  </ul>
+  <p>Horários podem mudar sem aviso. Confira na véspera de cada atração.</p>
+</div>
+</div>
+
+</body>
+</html>
