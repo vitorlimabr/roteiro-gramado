@@ -43,6 +43,11 @@ a{color:var(--accent)}
 .hero{display:flex;flex-direction:column;gap:10px}
 .eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 h1{margin:0;font-size:clamp(26px,6.4vw,38px);line-height:1.05;font-weight:800;letter-spacing:-.025em;text-wrap:balance}
+.titlerow{display:flex;align-items:flex-start;gap:12px;justify-content:space-between}
+.editbtn{flex:0 0 auto;margin-top:4px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:6px;color:var(--ink)}
+.editbtn svg{width:15px;height:15px}
+.editbtn.on{background:var(--accent-soft);border-color:transparent;color:var(--accent)}
+.codein{font:inherit;font-family:var(--f-mono);font-size:24px;letter-spacing:.4em;text-align:center;width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:12px}
 .crew{display:flex;flex-wrap:wrap;gap:6px}
 .crew span{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px 10px 3px 3px;font-size:13.5px;font-weight:600}
 .crew i{font-style:normal;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;background:var(--accent-soft);color:var(--accent)}
@@ -165,7 +170,7 @@ select,input[type="time"]{font:inherit;width:100%;border:1px solid var(--line);b
 <div class="app">
   <header class="hero">
     <div class="eyebrow">17 a 22 de dezembro de 2026 · Airbnb + carro próprio</div>
-    <h1>Natal em Gramado e Canela</h1>
+    <div class="titlerow"><h1>Natal em Gramado e Canela</h1><button class="editbtn" id="editbtn" hidden></button></div>
     <div class="crew">
       <span><i>V</i>Vitor</span><span><i>K</i>Karoline</span>
       <span><i>G</i>Guilherme <small>13 anos</small></span><span><i>G</i>Gustavo <small>5 anos</small></span><span><i>R</i>Rafael <small>11 meses</small></span>
@@ -254,14 +259,31 @@ const ITEMS={
 /* Estado salvo neste aparelho */
 const KEY='roteiro-gramado-v2';
 const defaults=()=>{const o={};DL.forEach(d=>o[d]=[]);for(const id in ITEMS)o[ITEMS[id].day].push(id);return {order:o,removed:[],fixed:{}}};
-function load(){let s=null;try{s=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
-  if(!s||!s.order)return defaults();
+function load(){let s=null;try{s=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}return normalize(s)}
+function normalize(s){
+  if(!s||!s.order)return defaults();s=JSON.parse(JSON.stringify(s));
   const seen=new Set();DL.forEach(d=>{s.order[d]=(s.order[d]||[]).filter(id=>ITEMS[id]&&!seen.has(id)&&seen.add(id))});
   s.removed=(s.removed||[]).filter(r=>ITEMS[r.id]&&!seen.has(r.id)&&seen.add(r.id));
   for(const id in ITEMS)if(!seen.has(id))s.order[ITEMS[id].day].push(id);
   s.fixed=s.fixed||{};return s}
 let S=load();
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+/* Modo compartilhado: no Netlify o roteiro fica salvo online e só quem tem o código edita. */
+const API='/api/roteiro';let REMOTE=false,rev=0,code='';
+try{code=localStorage.getItem(KEY+'-code')||''}catch(e){}
+const canEdit=()=>!REMOTE||!!code;
+function save(){
+  if(!REMOTE){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}return}
+  const body=JSON.stringify({baseRev:rev,state:S});
+  fetch(API,{method:'PUT',headers:{'content-type':'application/json','x-edit-code':code},body}).then(async r=>{
+    const j=await r.json().catch(()=>null);
+    if(r.ok&&j){rev=j.rev;return}
+    if(r.status===409&&j){S=normalize(j.state);rev=j.rev;render();toast('Outra pessoa alterou o roteiro antes. Mostrando a versão mais recente; refaça a sua mudança.');return}
+    if(r.status===401){code='';try{localStorage.removeItem(KEY+'-code')}catch(e){}await pull(true);toast('Código de edição inválido. A mudança não foi salva.');return}
+    await pull(true);toast('Não foi possível salvar. Verifique a conexão e tente de novo.')
+  }).catch(()=>{toast('Sem conexão: a mudança não foi salva.');setTimeout(()=>pull(true),1500)})}
+async function pull(force){
+  try{const r=await fetch(API,{cache:'no-store'});if(!r.ok)return false;const j=await r.json();
+    REMOTE=true;if(force||j.rev!==rev){rev=j.rev||0;S=normalize(j.state);if(!document.querySelector('.sheet')&&!sw)render()}return true}catch(e){return false}}
 const snap=()=>JSON.parse(JSON.stringify(S));
 
 const toM=t=>{const[h,m]=t.split(':').map(Number);return h*60+m};
@@ -311,6 +333,9 @@ function render(){
   document.getElementById('tab-roteiro').setAttribute('aria-pressed',tab==='roteiro');
   document.getElementById('tab-excluidos').setAttribute('aria-pressed',tab==='excluidos');
   document.getElementById('tab-infos').setAttribute('aria-pressed',tab==='infos');
+  const eb=document.getElementById('editbtn');eb.hidden=!REMOTE;
+  eb.className='editbtn'+(code?' on':'');
+  eb.innerHTML=code?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="9.5" rx="2"/><path d="M8.5 11V7.5a3.5 3.5 0 0 1 6.8-1.2"/></svg>Editando':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="9.5" rx="2"/><path d="M8.5 11V7.5a3.5 3.5 0 0 1 7 0V11"/></svg>Editar';
   const n=S.removed.length;document.getElementById('remcount').innerHTML=n?`<span class="badge">${n}</span>`:'';
   const days=document.getElementById('days');days.hidden=tab!=='roteiro';
   days.innerHTML=DAYS.map(x=>{const bad=compute(x.d).some(r=>r.alerts.length);
@@ -320,7 +345,7 @@ function render(){
   if(tab==='roteiro')v.innerHTML=renderDay(cur);
   else if(tab==='excluidos')v.innerHTML=renderRemoved();
   else v.innerHTML=renderInfos();
-  if(tab==='roteiro'&&window.Sortable){
+  if(tab==='roteiro'&&window.Sortable&&canEdit()){
     sortable=Sortable.create(document.getElementById('tl'),{handle:'.grip',animation:160,filter:'.locked',preventOnFilter:false,
       onMove:e=>!e.related.classList.contains('locked-end'),
       onEnd:e=>{if(e.oldIndex===e.newIndex)return;const before=snap();
@@ -330,7 +355,7 @@ function render(){
 function renderDay(d){
   const rows=compute(d),x=dayObj(d);
   const body=rows.map((r,i)=>{
-    const it=r.it,lock=it.lock;
+    const it=r.it,lock=it.lock||!canEdit();
     const gap=r.gap>=10?`<div class="gap">${IC.clock}Tempo livre · <b>${dur(r.gap)}</b></div>`:'';
     const travel=r.tr?`<div class="travel">${IC.car}<b>${hm(r.travelStart)}</b> · ${dur(r.tr)} · ${esc(it.travel[1])}</div>`:'';
     const tags=(it.tag?`<span class="chip ${it.tag[0]}">${esc(it.tag[1])}</span>`:'')+(r.fx&&!lock?`<span class="chip fix">${IC.pin} ${r.fx}</span>`:'');
@@ -344,11 +369,11 @@ function renderDay(d){
       <div class="swipe">${lock?'':`<div class="actions"><button class="mv" data-move="${r.id}">${IC.move}Mover</button><button class="del" data-del="${r.id}">${IC.trash}Excluir</button></div>`}
       <div class="card" data-card="${lock?'':r.id}"><div class="top">${tags}<span class="sp"></span>${ctrl}</div>
       <h3>${esc(it.title)}</h3>${sched}${it.desc?`<p>${esc(it.desc)}</p>`:''}${alerts}${it.resv?`<p class="resv">${esc(it.resv)}</p>`:''}${links}</div></div></div></li>`}).join('');
-  return `<div class="dayhead"><span class="wk">${x.full} · ${d}/12</span><h2>${esc(dayTitle(rows))}</h2><p>Deslize um evento para a esquerda para mover ou excluir. Segure os pontinhos para mudar a ordem.</p></div>
+  return `<div class="dayhead"><span class="wk">${x.full} · ${d}/12</span><h2>${esc(dayTitle(rows))}</h2><p>${canEdit()?'Deslize um evento para a esquerda para mover ou excluir. Segure os pontinhos para mudar a ordem.':'Somente leitura. Toque em Editar e informe o código para alterar o roteiro.'}</p></div>
     <ol class="tl" id="tl">${body||''}</ol>${rows.length?'':'<p class="empty">Nenhum evento neste dia.</p>'}`}
 
 function renderRemoved(){
-  const list=S.removed.map(r=>{const it=ITEMS[r.id];return `<div class="box rem"><div><h3>${esc(it.title)}</h3><small>Estava em ${r.day}/12</small></div><button class="btn" data-restore="${r.id}">Reativar</button></div>`}).join('');
+  const list=S.removed.map(r=>{const it=ITEMS[r.id];return `<div class="box rem"><div><h3>${esc(it.title)}</h3><small>Estava em ${r.day}/12</small></div>${canEdit()?`<button class="btn" data-restore="${r.id}">Reativar</button>`:''}</div>`}).join('');
   return `<section class="panel"><h2>Excluídos</h2><p class="lead">Eventos que você tirou do roteiro. Reative para escolher o dia e a posição.</p>${list||'<p class="empty">Nenhum evento excluído.</p>'}</section>`}
 
 function renderInfos(){
@@ -358,8 +383,8 @@ function renderInfos(){
   <div class="box"><h3>Datas dos espetáculos nesta semana</h3><ul><li>Grande Desfile: 18, 20 e 22/12, às 20h</li><li>Nativitaten: 17, 19 e 21/12, às 20h</li><li>Brilho do Natal: 15h e 18h de sexta a domingo, só 18h na quinta</li><li>Descida do Papai Noel: 18 a 21/12, às 20h30</li><li>Maria Fumaça: terça a domingo, primeiro trem às 9h</li></ul></div>
   <div class="box"><h3>Rafael, 11 meses</h3><p>Canguru para SkyGlass, Bondinhos e Florybal. Carrinho compacto para Mini Mundo, Lago Negro e Rua Coberta.</p></div>
   <div class="box"><h3>Trânsito de dezembro</h3><p>Os deslocamentos já contam com a alta temporada. Saídas noturnas de Gramado para Canela costumam ser as mais lentas.</p></div>
-  <div class="box"><h3>Onde ficam as suas mudanças</h3><p>As alterações feitas aqui ficam salvas neste aparelho e neste navegador. Em outro celular, o roteiro aparece na versão original.</p>
-  <p style="margin-top:10px"><button class="btn danger" id="reset">Restaurar roteiro original</button></p></div>
+  <div class="box"><h3>Onde ficam as mudanças</h3><p>${REMOTE?'As alterações ficam salvas online e aparecem para todos que abrirem o endereço. Só quem tem o código de edição consegue alterar.':'Nesta cópia, as alterações ficam salvas neste aparelho e neste navegador.'}</p>
+  ${canEdit()?'<p style="margin-top:10px"><button class="btn danger" id="reset">Restaurar roteiro original</button></p>':''}${REMOTE&&code?'<p style="margin-top:10px"><button class="btn ghost" id="logout">Sair do modo de edição neste aparelho</button></p>':''}</div>
   <div class="box src"><h3>Fontes consultadas em 02/11/2026</h3><ul>
   <li><a href="https://natalluz.ingressos.com.br/programacao" target="_blank" rel="noopener">Programação oficial do Natal Luz</a></li>
   <li><a href="https://sonhodenatal.com.br/" target="_blank" rel="noopener">Programação oficial do Sonho de Natal</a></li>
@@ -409,6 +434,21 @@ function openSheet(id,mode){
   setTimeout(()=>layer.querySelector('#sh-ok')&&layer.querySelector('#sh-ok').focus(),30);
 }
 
+function openCode(){
+  const layer=document.getElementById('layer');
+  layer.innerHTML=`<div class="scrim" data-close></div><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="cd-t"><div class="in">
+   <h2 id="cd-t">Código de edição</h2><p style="margin:0;color:var(--muted)">Informe o código para mover, excluir e reativar eventos. Ele fica guardado neste aparelho.</p>
+   <form id="cd-f"><input class="codein" id="cd-in" inputmode="numeric" autocomplete="off" maxlength="8" aria-label="Código de edição"></form>
+   <p id="cd-err" style="margin:0;color:var(--red);font-weight:600" hidden>Código incorreto.</p>
+   <div class="foot"><button class="btn ghost" data-close>Cancelar</button><button class="btn" id="cd-ok">Entrar</button></div></div></div>`;
+  const inp=layer.querySelector('#cd-in');setTimeout(()=>inp.focus(),30);
+  const go=async()=>{const v=inp.value.trim();if(!v)return;
+    try{const r=await fetch(API,{method:'POST',headers:{'x-edit-code':v}});
+      if(r.ok){code=v;try{localStorage.setItem(KEY+'-code',v)}catch(e){}layer.innerHTML='';render();toast('Modo de edição ativado')}
+      else{layer.querySelector('#cd-err').hidden=false;inp.select()}}catch(e){layer.querySelector('#cd-err').textContent='Sem conexão. Tente de novo.';layer.querySelector('#cd-err').hidden=false}};
+  layer.querySelector('#cd-f').addEventListener('submit',e=>{e.preventDefault();go()});
+  layer.onclick=e=>{if(e.target.closest('[data-close]'))layer.innerHTML='';else if(e.target.closest('#cd-ok'))go()}}
+
 function del(id){const before=snap();const d=DL.find(x=>S.order[x].includes(id));const i=S.order[d].indexOf(id);
   S.order[d].splice(i,1);S.removed.unshift({id,day:d,index:i});save();render();toast('Evento excluído',before)}
 
@@ -438,7 +478,10 @@ function endSwipe(e){if(!sw||e.pointerId!==sw.id)return;const s=sw;sw=null;if(!s
 document.addEventListener('pointerup',endSwipe);document.addEventListener('pointercancel',endSwipe);
 
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-day],[data-more],[data-move],[data-del],[data-restore],#reset,#tab-roteiro,#tab-excluidos,#tab-infos');if(!t)return;
+  const t=e.target.closest('[data-day],[data-more],[data-move],[data-del],[data-restore],#reset,#logout,#editbtn,#tab-roteiro,#tab-excluidos,#tab-infos');if(!t)return;
+  if(t.id==='editbtn'){if(!code)openCode();else{tab='infos';render();window.scrollTo(0,0)}return}
+  if(t.id==='logout'){code='';try{localStorage.removeItem(KEY+'-code')}catch(e){}render();toast('Modo de edição desativado neste aparelho');return}
+  if(!canEdit()&&(t.dataset.more||t.dataset.move||t.dataset.del||t.dataset.restore||t.id==='reset'))return;
   if(t.dataset.day){cur=t.dataset.day;remember();closeOpen();render();window.scrollTo(0,0);return}
   if(t.dataset.more){const c=t.closest('.card');if(open===c)closeOpen();else{closeOpen();c.style.transform=`translateX(${OPEN}px)`;open=c}return}
   if(t.dataset.move){closeOpen();openSheet(t.dataset.move,'move');return}
@@ -452,6 +495,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElement
 
 render();
 window.addEventListener('load',()=>window.scrollTo(0,0));
+pull(true).then(ok=>{if(ok){render();setInterval(()=>{if(document.visibilityState==='visible')pull(false)},20000);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pull(false)})}});
 })();
 </script>
 
