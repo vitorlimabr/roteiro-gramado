@@ -7,251 +7,453 @@
 <title>Natal em Gramado e Canela 2026</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=Geist+Mono:wght@500;600&display=swap">
 <style>
-/* Layout: cabeçalho curto + barra de dias fixa + uma linha do tempo vertical por dia (horário à esquerda, evento à direita) */
+/* Layout: app de uma coluna. Cabeçalho curto, faixa de dias fixa no topo, um dia por vez como linha do tempo de cartões, barra de abas fixa embaixo. */
 :root{
-  --bg:#F3F6F4; --surface:#FFFFFF; --ink:#14251D; --muted:#56675E; --line:#D5DED8;
-  --pine:#1E5A41; --pine-soft:#E2EEE7; --holly:#B42A22; --holly-soft:#FBE7E4;
-  --gold:#9A6B12; --gold-soft:#F7EEDB; --sky:#2B5C86; --sky-soft:#E3EDF6;
-  --f-display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
-  --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
-  --f-mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --bg:#F2F4F3; --surface:#FFFFFF; --surface-2:#E8ECEA; --ink:#101A16; --muted:#5D6B65; --line:#DCE2DF;
+  --accent:#0E6B4E; --accent-ink:#FFFFFF; --accent-soft:#DCEEE6;
+  --gold:#8A5A00; --gold-soft:#F6EBD3; --red:#B3261E; --red-soft:#FBE4E1; --blue:#245C8F; --blue-soft:#E1ECF7;
+  --shadow:0 1px 2px rgba(16,26,22,.06),0 4px 14px rgba(16,26,22,.06);
+  --f-body:"Onest", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0F1813; --surface:#16231C; --ink:#E6EEE9; --muted:#9DB0A5; --line:#2A3B32;
-  --pine:#6CC59A; --pine-soft:#1C3328; --holly:#F08A80; --holly-soft:#3A1F1C;
-  --gold:#E2B85C; --gold-soft:#33291A; --sky:#8DBBE6; --sky-soft:#1A2A38; color-scheme:dark}}
+  --bg:#0C1210; --surface:#151E1A; --surface-2:#1E2924; --ink:#E7EEEA; --muted:#9AABA3; --line:#2A3631;
+  --accent:#5CCB9C; --accent-ink:#06140E; --accent-soft:#163327;
+  --gold:#E7BE63; --gold-soft:#332917; --red:#F28B82; --red-soft:#3A1D1A; --blue:#8DBBE8; --blue-soft:#182838;
+  --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0F1813; --surface:#16231C; --ink:#E6EEE9; --muted:#9DB0A5; --line:#2A3B32;
-  --pine:#6CC59A; --pine-soft:#1C3328; --holly:#F08A80; --holly-soft:#3A1F1C;
-  --gold:#E2B85C; --gold-soft:#33291A; --sky:#8DBBE6; --sky-soft:#1A2A38; color-scheme:dark}
+  --bg:#0C1210; --surface:#151E1A; --surface-2:#1E2924; --ink:#E7EEEA; --muted:#9AABA3; --line:#2A3631;
+  --accent:#5CCB9C; --accent-ink:#06140E; --accent-soft:#163327;
+  --gold:#E7BE63; --gold-soft:#332917; --red:#F28B82; --red-soft:#3A1D1A; --blue:#8DBBE8; --blue-soft:#182838;
+  --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark}
 
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.45;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
-.wrap{max-width:880px;margin:0 auto;padding-block:28px 56px}
-a{color:var(--pine)}
-a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.app{max-width:760px;margin:0 auto;padding-block:20px calc(96px + env(safe-area-inset-bottom,0px))}
 
-header h1{font-family:var(--f-display);font-weight:800;font-size:clamp(30px,6vw,46px);line-height:1.05;margin:6px 0 10px;text-wrap:balance;letter-spacing:-.01em}
-.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--pine);font-weight:600}
-.meta{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--muted);font-size:15px;margin:0}
-.meta span{white-space:nowrap}
+/* Cabeçalho */
+.hero{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{margin:0;font-size:clamp(26px,6.4vw,38px);line-height:1.05;font-weight:800;letter-spacing:-.025em;text-wrap:balance}
+.crew{display:flex;flex-wrap:wrap;gap:6px}
+.crew span{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px 10px 3px 3px;font-size:13.5px;font-weight:600}
+.crew i{font-style:normal;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;background:var(--accent-soft);color:var(--accent)}
+.crew small{color:var(--muted);font-weight:500}
 
-.fix{margin-top:22px;background:var(--holly-soft);border:1px solid color-mix(in srgb,var(--holly) 35%,transparent);border-radius:12px;padding:16px 18px}
-.fix h2{font-family:var(--f-display);font-size:19px;margin:0 0 8px;color:var(--holly)}
-.fix ul{margin:0;padding-left:20px;display:grid;gap:6px}
-.fix li{font-size:15px}
-.fix b{font-weight:700}
+/* Faixa de dias */
+.days{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);margin:16px calc(-1*max(16px,env(safe-area-inset-left,0px))) 0;
+  padding:10px max(16px,env(safe-area-inset-left,0px));display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;border-bottom:1px solid var(--line)}
+.days button{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:6px 0 7px;display:flex;flex-direction:column;align-items:center;gap:1px;position:relative}
+.days b{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
+.days small{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.days button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.days button[aria-pressed="true"] small{color:inherit;opacity:.75}
+.days .dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--red)}
 
-.resv{margin-top:22px;background:var(--holly-soft);border-radius:12px;padding:16px 18px}
-.resv h2{font-family:var(--f-display);font-size:19px;margin:0 0 8px;color:var(--holly)}
-.resv ul{margin:0;padding-left:20px;display:grid;gap:4px;font-size:15px}
-.resv p{margin:8px 0 0;font-size:14px;color:var(--muted)}
-nav.days{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);margin:26px calc(-1*max(16px,env(safe-area-inset-left,0px))) 0;padding:10px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line);
-  display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
-nav.days::-webkit-scrollbar{display:none}
-nav.days a{flex:0 0 auto;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:baseline}
-nav.days a small{font-family:var(--f-mono);font-size:11px;color:var(--muted);font-weight:500}
+/* Cabeçalho do dia */
+.dayhead{margin:20px 0 12px;display:flex;flex-direction:column;gap:2px}
+.dayhead .wk{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.dayhead h2{margin:0;font-size:21px;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.dayhead p{margin:4px 0 0;color:var(--muted);font-size:13.5px}
 
-section.day{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 70px);margin-top:34px}
-.dayhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:8px}
-.dayhead .date{font-family:var(--f-display);font-weight:800;font-size:34px;line-height:1}
-.dayhead .wk{font-family:var(--f-mono);font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.dayhead h2{flex:1 1 260px;min-width:0;margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;text-wrap:balance}
+/* Linha do tempo */
+ol.tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.item{display:flex;flex-direction:column;gap:6px;padding-bottom:12px}
+.gap,.travel{display:flex;align-items:center;gap:8px;margin-left:72px;font-size:13px;color:var(--muted)}
+.travel svg,.gap svg{flex:0 0 auto;width:15px;height:15px}
+.travel b,.gap b{font-family:var(--f-mono);font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.gap{border:1px dashed var(--line);border-radius:10px;padding:6px 10px;width:fit-content;max-width:calc(100% - 72px)}
+.row{display:grid;grid-template-columns:62px minmax(0,1fr);gap:10px;align-items:start}
+.time{font-family:var(--f-mono);font-variant-numeric:tabular-nums;padding-top:12px;text-align:right}
+.time b{display:block;font-size:15px;font-weight:600}
+.time span{display:block;font-size:12px;color:var(--muted)}
 
-ol.tl{list-style:none;margin:0;padding:0}
-ol.tl li{display:grid;grid-template-columns:104px 1fr;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
-.t{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:14px;font-weight:600;color:var(--ink);padding-top:2px}
-.t small{display:block;font-weight:500;color:var(--muted);font-size:12px}
-.ev{min-width:0}
-.ev h3{margin:0;font-size:17px;font-weight:700;line-height:1.3;display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
-.ev p{margin:4px 0 0;color:var(--muted);font-size:15px}
-.ev p.note{color:var(--holly);font-size:14px}
-.tag{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:4px;white-space:nowrap}
-.tag.show{background:var(--gold-soft);color:var(--gold)}
-.tag.free{background:var(--pine-soft);color:var(--pine)}
-.tag.fix{background:var(--holly-soft);color:var(--holly);border:0;margin:0;padding:2px 7px}
-.tag.food{background:var(--sky-soft);color:var(--sky)}
-li.move .t,li.move .ev h3{color:var(--muted);font-weight:600}
-li.move .ev h3{font-size:15px}
-li.key{background:linear-gradient(90deg,var(--gold-soft),transparent 70%);border-radius:8px;padding-left:8px;padding-right:8px;margin-inline:-8px}
+.swipe{position:relative;min-width:0;border-radius:16px;overflow:hidden;background:var(--surface-2)}
+.actions{position:absolute;inset:0 0 0 auto;display:flex}
+.actions button{border:0;width:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:12.5px;font-weight:600}
+.actions svg{width:20px;height:20px}
+.actions .mv{background:var(--blue);color:var(--surface)}
+.actions .del{background:var(--red);color:var(--surface)}
+.card{position:relative;background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:12px 14px 13px;touch-action:pan-y;transition:transform .22s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;gap:5px}
+.card.dragging{transition:none}
+.top{display:flex;align-items:center;gap:6px;min-height:22px}
+.top .sp{flex:1}
+.chip{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:3px 7px;border-radius:6px;white-space:nowrap}
+.chip.show{background:var(--gold-soft);color:var(--gold)}
+.chip.food{background:var(--blue-soft);color:var(--blue)}
+.chip.free{background:var(--accent-soft);color:var(--accent)}
+.chip.fix{background:var(--surface-2);color:var(--muted)}
+.icbtn{border:0;background:transparent;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--muted)}
+.icbtn:hover{background:var(--surface-2)}
+.icbtn svg{width:18px;height:18px}
+.grip{cursor:grab;touch-action:none}
+.card h3{margin:0;font-size:16.5px;font-weight:700;line-height:1.3;text-wrap:balance}
+.card p{margin:0;color:var(--muted);font-size:14.5px}
+.card .sched{font-family:var(--f-mono);font-size:12.5px;color:var(--ink)}
+.alert{display:flex;gap:7px;align-items:flex-start;background:var(--red-soft);color:var(--red)!important;border-radius:9px;padding:7px 9px;font-size:13.5px!important;font-weight:600}
+.alert svg{flex:0 0 auto;width:16px;height:16px;margin-top:1px}
+.resv{background:var(--gold-soft);color:var(--gold)!important;border-radius:9px;padding:7px 9px;font-size:13.5px!important;font-weight:600}
+.links{display:flex;flex-wrap:wrap;gap:6px;margin-top:3px}
+.links a{font-size:13px;font-weight:600;text-decoration:none;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:4px 11px}
+.item.locked .card{background:transparent;box-shadow:none;border:1px solid var(--line)}
+.item.locked .swipe{background:transparent}
+.sortable-ghost .card{opacity:.35}
+.sortable-chosen .card{box-shadow:0 10px 30px rgba(16,26,22,.18)}
+.hint{margin:4px 0 0 72px;font-size:12.5px;color:var(--muted)}
 
-.tips{margin-top:40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
-.tips div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
-.tips h3{margin:0 0 4px;font-family:var(--f-display);font-size:17px}
-.tips p{margin:0;font-size:15px;color:var(--muted)}
-.ev p.links{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.ev p.links a{font-size:13px;font-weight:600;text-decoration:none;color:var(--pine);background:var(--pine-soft);border-radius:999px;padding:3px 10px}
-.ev p.links a:hover{text-decoration:underline}
-.ev p.warn{margin-top:8px;color:var(--holly);background:var(--holly-soft);border-radius:6px;padding:6px 10px;font-size:14px;font-weight:600}
-li.reserve .ev h3::after{content:"Reservar antes";font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:var(--holly-soft);color:var(--holly)}
-.src{margin-top:34px;font-size:13px;color:var(--muted)}
-.src h2{font-family:var(--f-display);font-size:16px;color:var(--ink);margin:0 0 6px}
-.src ul{padding-left:18px;margin:0;display:grid;gap:3px}
+/* Excluídos e Infos */
+.panel h2{margin:20px 0 4px;font-size:21px;font-weight:700}
+.panel>p.lead{margin:0 0 14px;color:var(--muted)}
+.box{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:14px 16px;margin-bottom:12px}
+.box h3{margin:0 0 6px;font-size:16px}
+.box p,.box li{color:var(--muted);font-size:14.5px}
+.box ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.box p{margin:0}
+.rem{display:flex;align-items:center;gap:12px}
+.rem div{flex:1;min-width:0}
+.rem small{display:block;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.btn{border:0;border-radius:11px;padding:9px 14px;font-weight:700;font-size:14px;background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:var(--surface-2);color:var(--ink)}
+.btn.danger{background:var(--red);color:var(--surface)}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
 .src a{word-break:break-word}
 
-@media (max-width:520px){
-  ol.tl li{grid-template-columns:78px 1fr;gap:10px}
-  .t{font-size:13px}
-  .dayhead .date{font-size:28px}
-}
-@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+/* Barra inferior */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:25;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);
+  padding:8px max(16px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.tabbar div{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tabbar button{border:0;background:transparent;border-radius:12px;padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;font-weight:600;color:var(--muted)}
+.tabbar svg{width:22px;height:22px}
+.tabbar button[aria-pressed="true"]{color:var(--accent);background:var(--accent-soft)}
+.badge{font-family:var(--f-mono);font-size:10.5px;background:var(--red);color:var(--surface);border-radius:999px;padding:0 6px;margin-left:3px}
+
+/* Folha inferior */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(8,14,11,.45)}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;background:var(--surface);border-radius:20px 20px 0 0;max-height:88vh;overflow:auto;
+  padding:16px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.sheet .in{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.sheet h2{margin:0;font-size:19px}
+.sheet .lbl{font-size:12px;font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px}
+.seg{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 0;display:flex;flex-direction:column;align-items:center;font-variant-numeric:tabular-nums}
+.seg button small{font-size:11px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.seg button[aria-pressed="true"] small{color:inherit}
+select,input[type="time"]{font:inherit;width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px 12px}
+.radio{display:flex;flex-direction:column;gap:8px}
+.radio label{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.radio input[type="time"]{width:auto;padding:6px 8px;margin-left:auto}
+.sheet .foot{display:flex;gap:8px;justify-content:flex-end}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:35;background:var(--ink);color:var(--bg);border-radius:12px;padding:10px 12px 10px 16px;display:flex;align-items:center;gap:12px;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:calc(100% - 32px)}
+.toast button{border:0;background:transparent;color:var(--accent);font-weight:700;filter:brightness(1.4)}
+
+@media (max-width:420px){.row{grid-template-columns:52px minmax(0,1fr);gap:8px}.gap,.travel,.hint{margin-left:60px}.gap{max-width:calc(100% - 60px)}.time b{font-size:14px}}
+@media (prefers-reduced-motion:reduce){.card{transition:none}}
 </style>
 </head>
 <body>
 
-<div class="wrap">
-<header>
-  <div class="eyebrow">Roteiro revisado · 17 a 22 de dezembro de 2026</div>
-  <h1>Natal em Gramado e Canela</h1>
-  <p class="meta"><span>Vitor e Karoline</span><span>Guilherme, 13 anos</span><span>Gustavo, 5 anos</span><span>Rafael, 11 meses</span><span>Airbnb + carro próprio</span></p>
+<div class="app">
+  <header class="hero">
+    <div class="eyebrow">17 a 22 de dezembro de 2026 · Airbnb + carro próprio</div>
+    <h1>Natal em Gramado e Canela</h1>
+    <div class="crew">
+      <span><i>V</i>Vitor</span><span><i>K</i>Karoline</span>
+      <span><i>G</i>Guilherme <small>13 anos</small></span><span><i>G</i>Gustavo <small>5 anos</small></span><span><i>R</i>Rafael <small>11 meses</small></span>
+    </div>
+  </header>
 
-  <div class="resv">
-    <h2>Reserve com antecedência</h2>
-    <ul>
-      <li><b>Era do Fogo</b>, 19/12 às 18h: reserva obrigatória.</li>
-      <li><b>Famiglia Pierre</b>, 21/12 às 21h15: voucher com horário marcado.</li>
-      <li><b>Kongo Pizzaria</b>, 18/12 às 21h: mesa reservada evita a fila.</li>
-      <li><b>Di Paolo</b>, 19/12 às 11h30: sábado é o dia mais cheio.</li>
-      <li><b>Bela Vista Café Colonial</b>, 22/12 às 11h: ingresso online.</li>
-      <li><b>Churrascaria em Canela</b>, 18/12 às 12h30.</li>
-    </ul>
-    <p>Ingressos já necessários: Maria Fumaça, Brilho de Natal, Grande Desfile e Nativitaten.</p>
-  </div>
-</header>
-
-<nav class="days" aria-label="Dias da viagem">
-  <a href="#d17">17 <small>qui</small></a>
-  <a href="#d18">18 <small>sex</small></a>
-  <a href="#d19">19 <small>sáb</small></a>
-  <a href="#d20">20 <small>dom</small></a>
-  <a href="#d21">21 <small>seg</small></a>
-  <a href="#d22">22 <small>ter</small></a>
-</nav>
-
-<!-- 17 -->
-<section class="day" id="d17">
-  <div class="dayhead"><span class="date">17/12</span><span class="wk">quinta</span><h2>Chegada, mercado e noite em casa</h2></div>
-  <ol class="tl">
-    <li><div class="t">16:00<small>até 17:00</small></div><div class="ev"><h3>Chegada em Gramado e check-in no Airbnb</h3><p>Acomodar malas, bebê e crianças.</p></div></li>
-    <li><div class="t">17:15<small>até 18:30</small></div><div class="ev"><h3>Supermercado</h3><p>Mantimentos, papinhas, fraldas e itens para cozinhar no Airbnb durante a semana.</p></div></li>
-    <li><div class="t">18:30<small>até 20:00</small></div><div class="ev"><h3>Jantar caseiro e descanso</h3></div></li>
-    <li><div class="t">20:00<small>opcional</small></div><div class="ev"><h3>O Despertar das Luzes <span class="tag free">Gratuito</span></h3><p>Show de acendimento em frente ao Palácio dos Festivais. Só se a turma ainda tiver energia.</p><p class="links"><a href="https://natalluz.ingressos.com.br/programacao" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/natalluzoficial/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Pal%C3%A1cio%20dos%20Festivais%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
-  </ol>
-</section>
-
-<!-- 18 -->
-<section class="day" id="d18">
-  <div class="dayhead"><span class="date">18/12</span><span class="wk">sexta</span><h2>Florybal, SkyGlass, Papai Noel e Kongo</h2></div>
-  <ol class="tl">
-    <li class="move"><div class="t">08:45</div><div class="ev"><h3>Gramado → Florybal (Canela), 20 a 30 min</h3></div></li>
-    <li><div class="t">09:15<small>até 12:15</small></div><div class="ev"><h3>Parque Terra Mágica Florybal</h3><p>Abre às 9h. Visita completa leva cerca de 2h30 a 3h. Há aluguel de carrinho de bebê no parque, útil para o Rafael.</p><p class="links"><a href="https://www.instagram.com/parqueterramagicaflorybal/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Parque%20Terra%20M%C3%A1gica%20Florybal%20Canela" target="_blank" rel="noopener">Mapa</a></p></div></li>
-    <li class="move"><div class="t">12:15</div><div class="ev"><h3>Deslocamento até o centro de Canela, 15 min</h3></div></li>
-    <li><div class="t">12:30<small>até 14:00</small></div><div class="ev"><h3>Almoço em churrascaria <span class="tag food">Almoço</span></h3><p>Garfo e Bombacha ou Espelho Gaúcho. Confirme o horário do almoço na reserva.</p><p class="warn">Reserve com antecedência: em dezembro as churrascarias de Canela lotam no almoço.</p><p class="links"><a href="https://www.instagram.com/garfoebombacha/" target="_blank" rel="noopener">Instagram Garfo e Bombacha</a><a href="https://www.google.com/maps/search/?api=1&query=Churrascaria%20Garfo%20e%20Bombacha%20Canela" target="_blank" rel="noopener">Mapa</a></p></div></li>
-    <li class="move"><div class="t">14:00</div><div class="ev"><h3>Canela → SkyGlass, 20 min</h3></div></li>
-    <li><div class="t">14:30<small>até 16:45</small></div><div class="ev"><h3>SkyGlass Canela</h3><p>Funciona das 9h às 18h. Plataforma de vidro sobre o Vale da Ferradura. Para o Rafael, prefira o canguru.</p><p class="links"><a href="https://www.instagram.com/skyglasscanela/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Skyglass%20Canela" target="_blank" rel="noopener">Mapa</a></p></div></li>
-    <li class="move"><div class="t">16:45</div><div class="ev"><h3>SkyGlass → Airbnb em Gramado, 30 a 40 min</h3></div></li>
-    <li><div class="t">17:30<small>até 19:15</small></div><div class="ev"><h3>Descanso no Airbnb</h3><p>Banho, troca de roupa e um lanche para as crianças, já que o jantar será mais tarde.</p></div></li>
-    <li class="move"><div class="t">19:15</div><div class="ev"><h3>Gramado → Catedral de Pedra, Canela, cerca de 30 min com trânsito de dezembro</h3></div></li>
-    <li><div class="t">19:45<small>até 20:30</small></div><div class="ev"><h3>Chegada à Catedral de Pedra</h3><p>Chegue cedo para ficar de frente para a fachada. Às 20h há o show de luzes e som das Casas Cantantes no Sonho de Natal.</p><p class="links"><a href="https://sonhodenatal.com.br/" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/sonhodenataloficial/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Catedral%20de%20Pedra%20Canela" target="_blank" rel="noopener">Mapa</a></p></div></li>
-    <li class="key"><div class="t">20:30<small>até 20:45</small></div><div class="ev"><h3>Descida do Papai Noel de rapel <span class="tag free">Gratuito</span></h3><p>Espetáculo “Contos da Catedral: O Segredo do Velho Noel”, com cerca de 15 min.</p><p class="links"><a href="https://sonhodenatal.com.br/" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/sonhodenataloficial/" target="_blank" rel="noopener">Instagram</a></p></div></li>
-    <li class="move"><div class="t">20:50</div><div class="ev"><h3>Catedral → Kongo Pizzaria, cerca de 15 min</h3><p>A Kongo fica na Av. das Hortênsias, no caminho de volta para Gramado.</p></div></li>
-    <li><div class="t">21:05<small>até 22:35</small></div><div class="ev"><h3>Jantar na Kongo Pizzaria <span class="tag food">Jantar</span></h3><p>Av. das Hortênsias, 5683, aberta até 23h30. Reserve mesa para 21h. Vocês pegam o show com personagens das 22h. Crianças até 4 anos não pagam.</p><p class="warn">Reserve com antecedência: sem reserva, o atendimento é por ordem de chegada e pode haver fila no Natal Luz.</p><p class="links"><a href="https://www.kongogramado.com.br/" target="_blank" rel="noopener">Site oficial</a><a href="https://www.google.com/maps/search/?api=1&query=Kongo%20Pizzaria%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
-    <li class="move"><div class="t">22:35</div><div class="ev"><h3>Retorno ao Airbnb, 10 a 15 min</h3></div></li>
-  </ol>
-</section>
-
-<!-- 19 -->
-<section class="day" id="d19">
-  <div class="dayhead"><span class="date">19/12</span><span class="wk">sábado</span><h2>Maria Fumaça em Bento, Era do Fogo e Rua Coberta</h2></div>
-  <ol class="tl">
-    <li class="move"><div class="t">06:00</div><div class="ev"><h3>Saída de carro: Gramado → Bento Gonçalves, cerca de 110 km, 2h a 2h30</h3><p>Café da manhã no carro e bebê no bebê conforto.</p></div></li>
-    <li><div class="t">08:15<small>até 08:45</small></div><div class="ev"><h3>Estação Férrea de Bento Gonçalves</h3><p>Rua Duque de Caxias, 286. Retirada dos bilhetes e recepção na estação.</p><p class="links"><a href="https://giordaniturismo.com.br/" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/giordani_turismo/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Esta%C3%A7%C3%A3o%20F%C3%A9rrea%20Bento%20Gon%C3%A7alves%20Maria%20Fuma%C3%A7a" target="_blank" rel="noopener">Mapa</a></p></div></li>
-    <li class="key"><div class="t">09:00<small>até 10:30</small></div><div class="ev"><h3>Maria Fumaça Bento → Carlos Barbosa <span class="tag show">Ingresso</span></h3><p>Primeiro trem do dia, só o passeio de Maria Fumaça. Cerca de 1h30, com parada de cerca de 20 min em Garibaldi. Em dezembro o trem opera de terça a domingo. Crianças pequenas no colo não pagam assento.</p><p class="links"><a href="https://giordaniturismo.com.br/passeios/nossos-horarios/" target="_blank" rel="noopener">Horários</a></p></div></li>
-    <li class="move"><div class="t">10:30</div><div class="ev"><h3>Ônibus de Carlos Barbosa de volta à estação de Bento, incluso no bilhete, cerca de 30 min</h3><p>O carro fica estacionado em Bento, perto da estação.</p></div></li>
-    <li class="move"><div class="t">11:05</div><div class="ev"><h3>Estação → Di Paolo, Bento centro, cerca de 10 min de carro</h3></div></li>
-    <li><div class="t">11:30<small>até 13:00</small></div><div class="ev"><h3>Almoço no Di Paolo <span class="tag food">Almoço</span></h3><p>Restaurante tradicional de Bento, perto do Pipa Pórtico, com sequência de galeto, massas, polenta e sopa de capeletti. Abre às 11h30; chegando na abertura, vocês evitam a fila do sábado.</p><p class="warn">Reserve com antecedência por telefone: sábado ao meio-dia é o horário mais cheio.</p><p class="links"><a href="https://www.google.com/maps/search/?api=1&query=Galeto%20Di%20Paolo%20Bento%20Gon%C3%A7alves" target="_blank" rel="noopener">Mapa</a></p></div></li>
-    <li class="move"><div class="t">13:00</div><div class="ev"><h3>Retorno de carro a Gramado, 2h a 2h30</h3></div></li>
-    <li><div class="t">15:15<small>até 17:30</small></div><div class="ev"><h3>Descanso no Airbnb</h3></div></li>
-    <li class="move"><div class="t">17:30</div><div class="ev"><h3>Airbnb → Era do Fogo, 10 a 15 min</h3></div></li>
-    <li><div class="t">17:45<small>até 19:30</small></div><div class="ev"><h3>Jantar na Era do Fogo, sessão das 18h <span class="tag food">Jantar</span></h3><p>Av. das Hortênsias, 4901. Fondue temático com espetáculo interativo e espaço para crianças. Funciona com sessões às 18h e 21h, com reserva obrigatória.</p><p class="warn">Reserva obrigatória para as sessões das 18h e 21h. Reserve assim que possível, porque dezembro é alta temporada.</p><p class="links"><a href="https://eradofogo.com.br/" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/hectorstudiosbr/" target="_blank" rel="noopener">Instagram do grupo Hector Studios</a><a href="https://www.google.com/maps/search/?api=1&query=Era%20do%20Fogo%20Av.%20das%20Hort%C3%AAnsias%204901%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
-    <li class="move"><div class="t">19:30</div><div class="ev"><h3>Deslocamento ao centro de Gramado e estacionamento, 15 a 20 min</h3></div></li>
-    <li><div class="t">19:50<small>até 20:50</small></div><div class="ev"><h3>Passeio leve pela Rua Coberta</h3><p>Decoração iluminada, Praça das Etnias e Palácio dos Festivais ao lado. Retorno ao Airbnb por volta das 21h, para descansar do dia que começou cedo.</p><p class="links"><a href="https://www.google.com/maps/search/?api=1&query=Rua%20Coberta%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
-  </ol>
-</section>
-
-<!-- 20 -->
-<section class="day" id="d20">
-  <div class="dayhead"><span class="date">20/12</span><span class="wk">domingo</span><h2>Lago Negro, Mini Mundo, Lugano, Brilho de Natal e Grande Desfile</h2></div>
-  <ol class="tl">
-    <li><div class="t">09:15<small>até 10:30</small></div><div class="ev"><h3>Lago Negro</h3><p>Caminhada ao redor do lago com o carrinho e pedalinho com o Guilherme. De manhã cedo o parque está mais tranquilo.</p><p class="links"><a href="https://www.google.com/maps/search/?api=1&query=Lago%20Negro%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
-    <li class="move"><div class="t">10:30</div><div class="ev"><h3>Lago Negro → Mini Mundo, 10 min</h3></div></li>
-    <li><div class="t">10:45<small>até 12:30</small></div><div class="ev"><h3>Mini Mundo</h3><p>Aberto das 9h às 17h. Caminhos planos, bom para o carrinho.</p><p class="links"><a href="https://www.minimundo.com.br/" target="_blank" rel="noopener">Site oficial</a><a href="https://www.google.com/maps/search/?api=1&query=Mini%20Mundo%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
-    <li><div class="t">12:30<small>até 13:30</small></div><div class="ev"><h3>Almoço simples no centro <span class="tag food">Almoço</span></h3></div></li>
-    <li><div class="t">13:40<small>até 14:25</small></div><div class="ev"><h3>Fábrica de Chocolate Lugano</h3><p>Visita à fábrica e à loja, com o processo do chocolate artesanal. Confirme o horário de domingo e a localização para caber antes do Brilho de Natal.</p><p class="links"><a href="https://www.chocolatelugano.com.br/" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/chocolatelugano/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Chocolate%20Lugano%20f%C3%A1brica%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
-    <li class="move"><div class="t">14:25</div><div class="ev"><h3>Deslocamento ao Palácio dos Festivais, chegada até 14h40</h3></div></li>
-    <li class="key"><div class="t">15:00<small>até 15:50</small></div><div class="ev"><h3>Brilho de Natal, Palácio dos Festivais <span class="tag show">Ingresso</span></h3><p>Chegue até 14h40: não há entrada depois do início. Sessão de cerca de 50 min, local coberto.</p><p class="links"><a href="https://natalluz.ingressos.com.br/programacao" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/natalluzoficial/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Pal%C3%A1cio%20dos%20Festivais%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
-    <li><div class="t">16:00<small>até 19:20</small></div><div class="ev"><h3>Descanso e jantar caseiro no Airbnb <span class="tag food">Jantar</span></h3><p>Jantar por volta das 18h, para sair com as crianças alimentadas antes do Desfile.</p></div></li>
-    <li class="move"><div class="t">19:20</div><div class="ev"><h3>Deslocamento ao Expogramado (Av. Borges de Medeiros, 4111), 15 a 20 min</h3></div></li>
-    <li class="key"><div class="t">20:00<small>até 21:00</small></div><div class="ev"><h3>Grande Desfile de Natal <span class="tag show">Ingresso</span></h3><p>Em 2026 é em área coberta, nos pavilhões do Expogramado. Retorno ao Airbnb por volta das 21h20.</p><p class="links"><a href="https://natalluz.ingressos.com.br/programacao" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/natalluzoficial/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Expogramado%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
-  </ol>
-</section>
-
-<!-- 21 -->
-<section class="day" id="d21">
-  <div class="dayhead"><span class="date">21/12</span><span class="wk">segunda</span><h2>Alpen Park, Bondinhos e Nativitaten</h2></div>
-  <ol class="tl">
-    <li class="move"><div class="t">09:00</div><div class="ev"><h3>Gramado → Alpen Park (Canela), 25 a 30 min</h3></div></li>
-    <li><div class="t">09:30<small>até 12:30</small></div><div class="ev"><h3>Alpen Park</h3><p>Aberto das 9h às 17h20. Em dias de semana o trenó funciona das 10h às 16h. Passaporte Kids para quem mede entre 0,80 m e 1,29 m, provavelmente o caso do Gustavo. A partir de 1,30 m, como deve ser o Guilherme, vale o passaporte completo.</p><p class="links"><a href="https://www.instagram.com/alpenpark/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Alpen%20Park%20Canela" target="_blank" rel="noopener">Mapa</a></p></div></li>
-    <li><div class="t">12:30<small>até 13:45</small></div><div class="ev"><h3>Almoço em Canela <span class="tag food">Almoço</span></h3></div></li>
-    <li class="move"><div class="t">13:45</div><div class="ev"><h3>Deslocamento aos Bondinhos (Estrada do Caracol), 15 a 20 min</h3></div></li>
-    <li><div class="t">14:15<small>até 16:15</small></div><div class="ev"><h3>Parque Bondinhos Canela</h3><p>Aberto das 9h às 17h, com vista da Cascata do Caracol. Crianças de 0 a 5 anos são isentas, o que inclui Gustavo e Rafael. Pode parar em caso de chuva.</p><p class="links"><a href="https://www.instagram.com/bondinhoscanela/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Parque%20Bondinhos%20Canela" target="_blank" rel="noopener">Mapa</a></p></div></li>
-    <li class="move"><div class="t">16:15</div><div class="ev"><h3>Retorno a Gramado, 30 a 40 min</h3></div></li>
-    <li><div class="t">17:00<small>até 19:20</small></div><div class="ev"><h3>Descanso no Airbnb, banho e roupas quentes</h3><p>O Nativitaten é ao ar livre. Leve manta e gorro para o bebê.</p></div></li>
-    <li class="move"><div class="t">19:20</div><div class="ev"><h3>Deslocamento ao Serra Park, cerca de 4 km do centro, 15 a 20 min</h3></div></li>
-    <li class="key"><div class="t">20:00<small>até 21:00</small></div><div class="ev"><h3>Nativitaten, Serra Park <span class="tag show">Ingresso</span></h3><p>Show sobre o lago, a céu aberto, com cerca de 1h.</p><p class="links"><a href="https://natalluz.ingressos.com.br/programacao" target="_blank" rel="noopener">Site oficial</a><a href="https://www.instagram.com/natalluzoficial/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Serra%20Park%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
-    <li class="move"><div class="t">21:00</div><div class="ev"><h3>Deslocamento à Famiglia Pierre, 15 a 20 min</h3></div></li>
-    <li><div class="t">21:20<small>até 23:00</small></div><div class="ev"><h3>Jantar na Famiglia Pierre <span class="tag food">Jantar</span></h3><p>Av. das Hortênsias, 1720. Jantar das 18h às 23h30. Reserve para 21h15 ou 21h30.</p><p class="warn">Reserve com antecedência: a casa vende vouchers antecipados pelo site oficial dela.</p><p class="links"><a href="https://www.google.com/maps/search/?api=1&query=Famiglia%20Pierre%20Av.%20das%20Hort%C3%AAnsias%201720%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
-  </ol>
-</section>
-
-<!-- 22 -->
-<section class="day" id="d22">
-  <div class="dayhead"><span class="date">22/12</span><span class="wk">terça</span><h2>Café colonial e volta para casa</h2></div>
-  <ol class="tl">
-    <li><div class="t">09:30<small>até 10:30</small></div><div class="ev"><h3>Malas e check-out do Airbnb</h3><p>Confirme o horário de check-out com o anfitrião.</p></div></li>
-    <li class="move"><div class="t">10:45</div><div class="ev"><h3>Deslocamento ao Bela Vista, 10 min</h3></div></li>
-    <li class="key"><div class="t">11:00<small>até 12:30</small></div><div class="ev"><h3>Bela Vista Café Colonial <span class="tag food">Brunch</span></h3><p>Av. das Hortênsias, 3500. Em dias de semana abre às 11h. Funciona como almoço de despedida.</p><p class="warn">Reserve com antecedência: compre o ingresso do café colonial online para evitar fila.</p><p class="links"><a href="https://www.instagram.com/belavistacafecolonialoficial/" target="_blank" rel="noopener">Instagram</a><a href="https://www.google.com/maps/search/?api=1&query=Bela%20Vista%20Caf%C3%A9%20Colonial%20Av.%20das%20Hort%C3%AAnsias%203500%20Gramado" target="_blank" rel="noopener">Mapa</a></p></div></li>
-    <li><div class="t">13:00</div><div class="ev"><h3>Saída de Gramado</h3></div></li>
-  </ol>
-</section>
-
-<div class="tips">
-  <div><h3>Datas dos espetáculos</h3><p>Nesta semana o Grande Desfile acontece em 18, 20 e 22/12 e o Nativitaten em 17, 19 e 21/12, sempre às 20h. O Brilho do Natal tem sessões às 15h e 18h de sexta a domingo, e só às 18h na quinta.</p></div>
-  <div><h3>Jantar tarde no dia 18</h3><p>Como a Kongo fica depois da descida do Papai Noel, o jantar começa perto das 21h. Leve um lanche reforçado para Guilherme, Gustavo e Rafael antes de sair para Canela.</p></div>
-  <div><h3>Trânsito de dezembro</h3><p>Os tempos de deslocamento já contam com a alta temporada. Saídas noturnas de Gramado para Canela costumam ser as mais lentas.</p></div>
-  <div><h3>Bebê de 11 meses</h3><p>Canguru para SkyGlass, Bondinhos e Florybal. Carrinho compacto para Mini Mundo, Lago Negro e Rua Coberta.</p></div>
+  <nav class="days" id="days" aria-label="Dias da viagem"></nav>
+  <main id="view"></main>
 </div>
 
-<div class="src">
-  <h2>Fontes consultadas em 02/11/2026</h2>
-  <ul>
-    <li><a href="https://natalluz.ingressos.com.br/programacao">Programação oficial do Natal Luz</a></li>
-    <li><a href="https://sonhodenatal.com.br/">Programação oficial do Sonho de Natal de Canela</a></li>
-    <li><a href="https://giordaniturismo.com.br/passeios/nossos-horarios/">Giordani Turismo: horários da Maria Fumaça</a></li>
-    <li><a href="https://www.melhoresdestinos.com.br/gramado-novo-restaurante-tematico-famiglia-pierre.html">Famiglia Pierre: horário e endereço</a></li>
-    <li><a href="https://eradofogo.com.br/">Era do Fogo: sessões</a></li>
-    <li><a href="https://quantocustaviajar.com/blog/pizzaria-kongo-em-gramado/">Kongo Pizzaria</a></li>
-    <li><a href="https://www.grupodicas.com/onde-tomar-cafe-colonial-em-gramado/">Bela Vista Café Colonial</a></li>
-    <li><a href="https://www.buenasdicas.com/onde-comer-bento-goncalves-10670/">Di Paolo em Bento Gonçalves</a></li>
-    <li><a href="https://www.melhoresdestinos.com.br/alpen-park.html">Alpen Park</a> · <a href="https://www.viagensecaminhos.com/parque-terra-magica-florybal/">Florybal</a> · <a href="https://www.viagensecaminhos.com/skyglass-canela/">SkyGlass</a> · <a href="https://www.viagensecaminhos.com/parque-da-serra-bondinhos-aereos-canela/">Bondinhos</a> · <a href="https://www.viagensecaminhos.com/mini-mundo-o-mundo-em-miniatura-de-gramado/">Mini Mundo</a></li>
-  </ul>
-  <p>Horários podem mudar sem aviso. Confira na véspera de cada atração.</p>
-</div>
-</div>
+<nav class="tabbar" aria-label="Seções"><div>
+  <button id="tab-roteiro" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Roteiro</button>
+  <button id="tab-excluidos" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg><span>Excluídos<span id="remcount"></span></span></button>
+  <button id="tab-infos" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.6v.4"/></svg>Reservas e dicas</button>
+</div></nav>
+
+<div id="layer"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+<script>
+(function(){
+if('scrollRestoration' in history) history.scrollRestoration='manual';
+if(location.hash) history.replaceState(null,'',location.pathname+location.search);
+window.scrollTo(0,0);
+
+const NL=[['Site oficial','https://natalluz.ingressos.com.br/programacao'],['Instagram','https://www.instagram.com/natalluzoficial/']];
+const SN=[['Site oficial','https://sonhodenatal.com.br/'],['Instagram','https://www.instagram.com/sonhodenataloficial/']];
+const map=q=>['Mapa','https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)];
+
+const DAYS=[
+ {d:'17',wd:'qui',full:'Quinta-feira',start:'16:00'},
+ {d:'18',wd:'sex',full:'Sexta-feira',start:'08:45'},
+ {d:'19',wd:'sáb',full:'Sábado',start:'06:00'},
+ {d:'20',wd:'dom',full:'Domingo',start:'09:05'},
+ {d:'21',wd:'seg',full:'Segunda-feira',start:'09:00'},
+ {d:'22',wd:'ter',full:'Terça-feira',start:'09:30'}];
+const DL=DAYS.map(x=>x.d);
+
+/* Cada evento: dur = minutos no local; travel = deslocamento antes; fixed = horário de início fixo; early = chegar X min antes;
+   opens/closes = funcionamento; days = dias em que acontece; flex = estica para preencher espera; lock = fixo no lugar. */
+const ITEMS={
+ chegada:{day:'17',lock:1,title:'Chegada em Gramado e check-in no Airbnb',fixed:'16:00',dur:60,desc:'Acomodar malas e organizar o Rafael e as crianças.'},
+ mercado:{day:'17',short:'mercado',title:'Supermercado',travel:[10,'Airbnb → supermercado'],dur:65,desc:'Mantimentos, papinhas, fraldas e itens para cozinhar no Airbnb durante a semana.'},
+ jantar17:{day:'17',short:'jantar em casa',title:'Jantar caseiro e descanso',tag:['food','Jantar'],travel:[10,'Volta ao Airbnb'],dur:60,flex:1},
+ despertar:{day:'17',short:'Despertar das Luzes',title:'O Despertar das Luzes',tag:['free','Gratuito'],travel:[15,'Airbnb → Palácio dos Festivais'],fixed:'20:00',dur:20,desc:'Show de acendimento em frente ao Palácio dos Festivais. Opcional, só se a turma ainda tiver energia.',links:[...NL,map('Palácio dos Festivais Gramado')]},
+ volta17:{day:'17',lock:1,home:1,title:'Volta ao Airbnb',travel:[15,'Palácio → Airbnb'],dur:0},
+
+ florybal:{day:'18',short:'Florybal',title:'Parque Terra Mágica Florybal',travel:[30,'Gramado → Florybal, Canela'],dur:180,opens:'09:00',closes:'16:30',desc:'Visita completa leva cerca de 2h30 a 3h. Há aluguel de carrinho de bebê no parque, útil para o Rafael.',links:[['Instagram','https://www.instagram.com/parqueterramagicaflorybal/'],map('Parque Terra Mágica Florybal Canela')]},
+ churrasco:{day:'18',short:'churrascaria',title:'Almoço em churrascaria',tag:['food','Almoço'],travel:[15,'Florybal → centro de Canela'],dur:90,desc:'Garfo e Bombacha ou Espelho Gaúcho. Confirme o horário do almoço na reserva.',resv:'Reserve com antecedência: em dezembro as churrascarias de Canela lotam no almoço.',links:[['Instagram Garfo e Bombacha','https://www.instagram.com/garfoebombacha/'],map('Churrascaria Garfo e Bombacha Canela')]},
+ skyglass:{day:'18',short:'SkyGlass',title:'SkyGlass Canela',travel:[20,'Canela → SkyGlass'],dur:135,opens:'09:00',closes:'18:00',desc:'Plataforma de vidro sobre o Vale da Ferradura, aberta das 9h às 18h. Para o Rafael, prefira o canguru.',links:[['Instagram','https://www.instagram.com/skyglasscanela/'],map('Skyglass Canela')]},
+ descanso18:{day:'18',title:'Descanso no Airbnb',travel:[40,'SkyGlass → Airbnb'],dur:60,flex:1,desc:'Banho, troca de roupa e um lanche reforçado para Guilherme, Gustavo e Rafael, já que o jantar será mais tarde.'},
+ catedral:{day:'18',title:'Chegada à Catedral de Pedra',travel:[30,'Gramado → Catedral de Pedra, com trânsito de dezembro'],fixed:'19:45',dur:45,desc:'Chegue cedo para ficar de frente para a fachada. Às 20h há o show de luzes e som das Casas Cantantes.',links:[...SN,map('Catedral de Pedra Canela')]},
+ descida:{day:'18',short:'Papai Noel de rapel',title:'Descida do Papai Noel de rapel',tag:['free','Gratuito'],fixed:'20:30',dur:15,days:['18','19','20','21'],desc:'Espetáculo “Contos da Catedral: O Segredo do Velho Noel”, na Catedral de Pedra, com cerca de 15 min.',links:SN},
+ kongo:{day:'18',short:'Kongo',title:'Jantar na Kongo Pizzaria',tag:['food','Jantar'],travel:[15,'Catedral → Kongo'],dur:90,opens:'18:00',closes:'23:30',desc:'Av. das Hortênsias, 5683. Show com personagens às 22h. Crianças até 4 anos não pagam.',resv:'Reserve com antecedência: sem reserva, o atendimento é por ordem de chegada e pode haver fila no Natal Luz.',links:[['Site oficial','https://www.kongogramado.com.br/'],map('Kongo Pizzaria Gramado')]},
+ volta18:{day:'18',lock:1,home:1,title:'Volta ao Airbnb',travel:[15,'Kongo → Airbnb'],dur:0},
+
+ mariafumaca:{day:'19',short:'Maria Fumaça',title:'Maria Fumaça Bento → Carlos Barbosa',tag:['show','Ingresso'],travel:[135,'Gramado → Estação Férrea de Bento Gonçalves, 110 km'],fixed:'09:00',early:45,dur:120,days:['17','18','19','20','22'],desc:'Primeiro trem do dia, com parada de cerca de 20 min em Garibaldi. Volta de ônibus até a estação de Bento, incluso no bilhete. Estação: Rua Duque de Caxias, 286. Em dezembro o trem não opera às segundas.',links:[['Site oficial','https://giordaniturismo.com.br/'],['Horários','https://giordaniturismo.com.br/passeios/nossos-horarios/'],['Instagram','https://www.instagram.com/giordani_turismo/'],map('Estação Férrea Bento Gonçalves Maria Fumaça')]},
+ dipaolo:{day:'19',short:'Di Paolo',title:'Almoço no Di Paolo, Bento Gonçalves',tag:['food','Almoço'],travel:[10,'Estação → Di Paolo'],dur:90,opens:'11:30',desc:'Restaurante tradicional de Bento, perto do Pipa Pórtico, com sequência de galeto, massas, polenta e sopa de capeletti.',resv:'Reserve com antecedência por telefone: sábado ao meio-dia é o horário mais cheio.',links:[map('Galeto Di Paolo Bento Gonçalves')]},
+ descanso19:{day:'19',title:'Descanso no Airbnb',travel:[135,'Bento Gonçalves → Gramado'],dur:60,flex:1},
+ erafogo:{day:'19',short:'Era do Fogo',title:'Jantar na Era do Fogo, sessão das 18h',tag:['food','Jantar'],travel:[15,'Airbnb → Era do Fogo'],fixed:'18:00',dur:90,days:['17','18','19','20','21'],desc:'Av. das Hortênsias, 4901. Fondue temático com espetáculo interativo e espaço para crianças. Sessões às 18h e 21h, fechado às terças.',resv:'Reserva obrigatória. Reserve assim que possível, porque dezembro é alta temporada.',links:[['Site oficial','https://eradofogo.com.br/'],['Instagram do grupo Hector Studios','https://www.instagram.com/hectorstudiosbr/'],map('Era do Fogo Av. das Hortênsias 4901 Gramado')]},
+ ruacoberta:{day:'19',short:'Rua Coberta',title:'Passeio leve pela Rua Coberta',travel:[20,'Deslocamento ao centro e estacionamento'],dur:60,desc:'Decoração iluminada, Praça das Etnias e Palácio dos Festivais ao lado.',links:[map('Rua Coberta Gramado')]},
+ volta19:{day:'19',lock:1,home:1,title:'Volta ao Airbnb',travel:[10,'Centro → Airbnb'],dur:0},
+
+ lagonegro:{day:'20',short:'Lago Negro',title:'Lago Negro',travel:[10,'Airbnb → Lago Negro'],dur:75,desc:'Caminhada ao redor do lago com o carrinho e pedalinho com o Guilherme. De manhã cedo o parque está mais tranquilo.',links:[map('Lago Negro Gramado')]},
+ minimundo:{day:'20',short:'Mini Mundo',title:'Mini Mundo',travel:[10,'Lago Negro → Mini Mundo'],dur:105,opens:'09:00',closes:'17:00',desc:'Aberto das 9h às 17h. Caminhos planos, bom para o carrinho.',links:[['Site oficial','https://www.minimundo.com.br/'],map('Mini Mundo Gramado')]},
+ almoco20:{day:'20',title:'Almoço simples no centro',tag:['food','Almoço'],travel:[5,'Mini Mundo → centro'],dur:60},
+ lugano:{day:'20',short:'Lugano',title:'Fábrica de Chocolate Lugano',travel:[10,'Centro → Lugano'],dur:45,desc:'Visita à fábrica e à loja, com o processo do chocolate artesanal. Confirme o horário de domingo.',links:[['Site oficial','https://www.chocolatelugano.com.br/'],['Instagram','https://www.instagram.com/chocolatelugano/'],map('Chocolate Lugano fábrica Gramado')]},
+ brilho:{day:'20',short:'Brilho de Natal',title:'Brilho de Natal, Palácio dos Festivais',tag:['show','Ingresso'],travel:[15,'Lugano → Palácio dos Festivais'],fixed:'15:00',early:20,dur:50,days:['17','18','19','20'],desc:'Não há entrada depois do início. Sessão de cerca de 50 min, local coberto. Sessões às 15h e 18h de sexta a domingo, só às 18h na quinta.',links:[...NL,map('Palácio dos Festivais Gramado')]},
+ descanso20:{day:'20',title:'Descanso e jantar caseiro no Airbnb',tag:['food','Jantar'],travel:[15,'Palácio → Airbnb'],dur:120,flex:1,desc:'Jantar por volta das 18h, para sair com as crianças alimentadas.'},
+ desfile:{day:'20',short:'Grande Desfile',title:'Grande Desfile de Natal',tag:['show','Ingresso'],travel:[20,'Airbnb → Expogramado, Av. Borges de Medeiros, 4111'],fixed:'20:00',early:15,dur:60,days:['18','20','22'],desc:'Em 2026 é em área coberta, nos pavilhões do Expogramado.',links:[...NL,map('Expogramado Gramado')]},
+ volta20:{day:'20',lock:1,home:1,title:'Volta ao Airbnb',travel:[20,'Expogramado → Airbnb'],dur:0},
+
+ alpen:{day:'21',short:'Alpen Park',title:'Alpen Park',travel:[30,'Gramado → Alpen Park, Canela'],dur:180,opens:'09:00',closes:'17:20',desc:'Em dias de semana o trenó funciona das 10h às 16h. Passaporte Kids para quem mede entre 0,80 m e 1,29 m, provavelmente o caso do Gustavo. A partir de 1,30 m, como deve ser o Guilherme, vale o passaporte completo.',links:[['Instagram','https://www.instagram.com/alpenpark/'],map('Alpen Park Canela')]},
+ almoco21:{day:'21',title:'Almoço em Canela',tag:['food','Almoço'],dur:75},
+ bondinhos:{day:'21',short:'Bondinhos',title:'Parque Bondinhos Canela',travel:[20,'Canela → Estrada do Caracol'],dur:120,opens:'09:00',closes:'17:00',desc:'Vista da Cascata do Caracol. Crianças de 0 a 5 anos são isentas, o que inclui Gustavo e Rafael. Pode parar em caso de chuva.',links:[['Instagram','https://www.instagram.com/bondinhoscanela/'],map('Parque Bondinhos Canela')]},
+ descanso21:{day:'21',title:'Descanso no Airbnb, banho e roupas quentes',travel:[40,'Bondinhos → Airbnb'],dur:60,flex:1,desc:'O Nativitaten é ao ar livre. Leve manta e gorro para o Rafael.'},
+ nativitaten:{day:'21',short:'Nativitaten',title:'Nativitaten, Serra Park',tag:['show','Ingresso'],travel:[20,'Airbnb → Serra Park'],fixed:'20:00',early:15,dur:60,days:['17','19','21'],desc:'Show sobre o lago, a céu aberto, com cerca de 1h.',links:[...NL,map('Serra Park Gramado')]},
+ famiglia:{day:'21',short:'Famiglia Pierre',title:'Jantar na Famiglia Pierre',tag:['food','Jantar'],travel:[20,'Serra Park → Famiglia Pierre'],dur:100,opens:'18:00',closes:'23:30',desc:'Av. das Hortênsias, 1720. Jantar das 18h às 23h30.',resv:'Reserve com antecedência: a casa vende vouchers antecipados pelo site oficial dela.',links:[map('Famiglia Pierre Av. das Hortênsias 1720 Gramado')]},
+ volta21:{day:'21',lock:1,home:1,title:'Volta ao Airbnb',travel:[15,'Famiglia Pierre → Airbnb'],dur:0},
+
+ malas:{day:'22',title:'Malas e check-out do Airbnb',dur:60,desc:'Confirme o horário de check-out com o anfitrião.'},
+ belavista:{day:'22',short:'café colonial',title:'Bela Vista Café Colonial',tag:['food','Brunch'],travel:[15,'Airbnb → Bela Vista'],dur:90,opens:'11:00',desc:'Av. das Hortênsias, 3500. Em dias de semana abre às 11h. Funciona como almoço de despedida.',resv:'Reserve com antecedência: compre o ingresso do café colonial online para evitar fila.',links:[['Instagram','https://www.instagram.com/belavistacafecolonialoficial/'],map('Bela Vista Café Colonial Av. das Hortênsias 3500 Gramado')]},
+ saida:{day:'22',lock:1,title:'Saída de Gramado',fixed:'13:00',dur:0}
+};
+
+/* Estado salvo neste aparelho */
+const KEY='roteiro-gramado-v2';
+const defaults=()=>{const o={};DL.forEach(d=>o[d]=[]);for(const id in ITEMS)o[ITEMS[id].day].push(id);return {order:o,removed:[],fixed:{}}};
+function load(){let s=null;try{s=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
+  if(!s||!s.order)return defaults();
+  const seen=new Set();DL.forEach(d=>{s.order[d]=(s.order[d]||[]).filter(id=>ITEMS[id]&&!seen.has(id)&&seen.add(id))});
+  s.removed=(s.removed||[]).filter(r=>ITEMS[r.id]&&!seen.has(r.id)&&seen.add(r.id));
+  for(const id in ITEMS)if(!seen.has(id))s.order[ITEMS[id].day].push(id);
+  s.fixed=s.fixed||{};return s}
+let S=load();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const snap=()=>JSON.parse(JSON.stringify(S));
+
+const toM=t=>{const[h,m]=t.split(':').map(Number);return h*60+m};
+const hm=m=>{m=Math.round(m);const h=Math.floor(m/60),mm=m%60;return String(h%24).padStart(2,'0')+':'+String(mm).padStart(2,'0')};
+const dur=m=>m>=60?(Math.floor(m/60)+'h'+(m%60?String(m%60).padStart(2,'0'):'')):m+' min';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fixedOf=id=>Object.prototype.hasOwnProperty.call(S.fixed,id)?S.fixed[id]:(ITEMS[id].fixed||null);
+const dayObj=d=>DAYS.find(x=>x.d===d);
+
+function compute(d){
+  let cur=toM(dayObj(d).start),out=[],prev=null;
+  for(const id of S.order[d]){
+    const it=ITEMS[id],fx=fixedOf(id),tr=it.travel?it.travel[0]:0,alerts=[];
+    let arrive=cur+tr,gap=0,target=null;
+    if(fx)target=toM(fx)-(it.early||0);else if(it.opens)target=toM(it.opens);
+    if(target!=null&&arrive<target){gap=target-arrive;if(prev&&prev.flex){prev.end+=gap;gap=0}arrive=target}
+    let start=fx?Math.max(toM(fx),arrive):arrive;
+    if(fx&&arrive>toM(fx)-(it.early||0)){
+      if(arrive>toM(fx))alerts.push(`Começa às ${fx}, mas vocês só chegam às ${hm(arrive)}.`);
+      else alerts.push(`O ideal é chegar até ${hm(toM(fx)-it.early)}; pela sequência, vocês chegam às ${hm(arrive)}.`)}
+    const end=start+it.dur;
+    if(it.days&&!it.days.includes(d))alerts.push(`Não acontece em ${d}/12. Datas nesta semana: ${it.days.map(x=>x+'/12').join(', ')}.`);
+    if(it.closes&&end>toM(it.closes))alerts.push(`Fecha às ${it.closes}; pela sequência, a visita termina às ${hm(end)}.`);
+    if(end>24*60)alerts.push('Termina depois da meia-noite.');
+    const r={id,it,fx,tr,travelStart:arrive-tr,start,end,gap,alerts,flex:!!it.flex};
+    out.push(r);prev=r;cur=end}
+  return out}
+
+function dayTitle(rows){const s=rows.map(r=>r.it.short).filter(Boolean);if(!s.length)return 'Dia livre';
+  const t=s.length>1?s.slice(0,-1).join(', ')+' e '+s[s.length-1]:s[0];return t.charAt(0).toUpperCase()+t.slice(1)}
+
+const IC={
+ car:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 16V11l2-5h10l2 5v5M3.5 16h17v2.5h-17zM5 11h14"/><circle cx="8" cy="18.5" r="1.4"/><circle cx="16" cy="18.5" r="1.4"/></svg>',
+ clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
+ warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3.5 2.5 20h19L12 3.5zM12 10v4.5M12 17.5v.3"/></svg>',
+ grip:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>',
+ more:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5.5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18.5" cy="12" r="1.7"/></svg>',
+ move:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M9 15h6M13 13l2 2-2 2"/></svg>',
+ trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></svg>',
+ pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="11" height="11"><path d="M12 15v6M8 4h8l-1 6 3 3H6l3-3z"/></svg>'
+};
+
+let tab='roteiro',cur=DL[0],sortable=null;
+try{const t=localStorage.getItem(KEY+'-day');if(DL.includes(t))cur=t}catch(e){}
+
+function render(){
+  document.getElementById('tab-roteiro').setAttribute('aria-pressed',tab==='roteiro');
+  document.getElementById('tab-excluidos').setAttribute('aria-pressed',tab==='excluidos');
+  document.getElementById('tab-infos').setAttribute('aria-pressed',tab==='infos');
+  const n=S.removed.length;document.getElementById('remcount').innerHTML=n?`<span class="badge">${n}</span>`:'';
+  const days=document.getElementById('days');days.hidden=tab!=='roteiro';
+  days.innerHTML=DAYS.map(x=>{const bad=compute(x.d).some(r=>r.alerts.length);
+    return `<button data-day="${x.d}" aria-pressed="${x.d===cur}" aria-label="${x.full}, ${x.d} de dezembro"><b>${x.d}</b><small>${x.wd}</small>${bad?'<span class="dot" aria-hidden="true"></span>':''}</button>`}).join('');
+  const v=document.getElementById('view');
+  if(sortable){sortable.destroy();sortable=null}
+  if(tab==='roteiro')v.innerHTML=renderDay(cur);
+  else if(tab==='excluidos')v.innerHTML=renderRemoved();
+  else v.innerHTML=renderInfos();
+  if(tab==='roteiro'&&window.Sortable){
+    sortable=Sortable.create(document.getElementById('tl'),{handle:'.grip',animation:160,filter:'.locked',preventOnFilter:false,
+      onMove:e=>!e.related.classList.contains('locked-end'),
+      onEnd:e=>{if(e.oldIndex===e.newIndex)return;const before=snap();
+        S.order[cur]=[...document.querySelectorAll('#tl > li')].map(li=>li.dataset.id);save();render();toast('Ordem atualizada',before)}})}
+}
+
+function renderDay(d){
+  const rows=compute(d),x=dayObj(d);
+  const body=rows.map((r,i)=>{
+    const it=r.it,lock=it.lock;
+    const gap=r.gap>=10?`<div class="gap">${IC.clock}Tempo livre · <b>${dur(r.gap)}</b></div>`:'';
+    const travel=r.tr?`<div class="travel">${IC.car}<b>${hm(r.travelStart)}</b> · ${dur(r.tr)} · ${esc(it.travel[1])}</div>`:'';
+    const tags=(it.tag?`<span class="chip ${it.tag[0]}">${esc(it.tag[1])}</span>`:'')+(r.fx&&!lock?`<span class="chip fix">${IC.pin} ${r.fx}</span>`:'');
+    const sched=it.early?`<p class="sched">Chegar até ${hm(toM(r.fx||it.fixed)-it.early)}</p>`:'';
+    const alerts=r.alerts.map(a=>`<p class="alert">${IC.warn}<span>${esc(a)}</span></p>`).join('');
+    const links=it.links?`<div class="links">${it.links.map(([t,u])=>`<a href="${u}" target="_blank" rel="noopener">${esc(t)}</a>`).join('')}</div>`:'';
+    const ctrl=lock?'':`<button class="icbtn more" data-more="${r.id}" aria-label="Opções de ${esc(it.title)}">${IC.more}</button><span class="icbtn grip" aria-label="Arrastar para reordenar" title="Arrastar para reordenar">${IC.grip}</span>`;
+    const time=it.dur?`<b>${hm(r.start)}</b><span>${hm(r.end)}</span>`:`<b>${hm(r.start)}</b>`;
+    return `<li class="item${lock?' locked':''}${it.home||r.id==='saida'?' locked-end':''}" data-id="${r.id}">${gap}${travel}
+      <div class="row"><div class="time">${time}</div>
+      <div class="swipe">${lock?'':`<div class="actions"><button class="mv" data-move="${r.id}">${IC.move}Mover</button><button class="del" data-del="${r.id}">${IC.trash}Excluir</button></div>`}
+      <div class="card" data-card="${lock?'':r.id}"><div class="top">${tags}<span class="sp"></span>${ctrl}</div>
+      <h3>${esc(it.title)}</h3>${sched}${it.desc?`<p>${esc(it.desc)}</p>`:''}${alerts}${it.resv?`<p class="resv">${esc(it.resv)}</p>`:''}${links}</div></div></div></li>`}).join('');
+  return `<div class="dayhead"><span class="wk">${x.full} · ${d}/12</span><h2>${esc(dayTitle(rows))}</h2><p>Deslize um evento para a esquerda para mover ou excluir. Segure os pontinhos para mudar a ordem.</p></div>
+    <ol class="tl" id="tl">${body||''}</ol>${rows.length?'':'<p class="empty">Nenhum evento neste dia.</p>'}`}
+
+function renderRemoved(){
+  const list=S.removed.map(r=>{const it=ITEMS[r.id];return `<div class="box rem"><div><h3>${esc(it.title)}</h3><small>Estava em ${r.day}/12</small></div><button class="btn" data-restore="${r.id}">Reativar</button></div>`}).join('');
+  return `<section class="panel"><h2>Excluídos</h2><p class="lead">Eventos que você tirou do roteiro. Reative para escolher o dia e a posição.</p>${list||'<p class="empty">Nenhum evento excluído.</p>'}</section>`}
+
+function renderInfos(){
+  const res=[];DL.forEach(d=>compute(d).forEach(r=>{if(r.it.resv)res.push(`<li><b>${esc(r.it.title.replace(/^Jantar na |^Almoço no |^Almoço em /,''))}</b>, ${d}/12 às ${hm(r.start)}</li>`)}));
+  return `<section class="panel"><h2>Reservas e dicas</h2><p class="lead">Lista atualizada conforme o roteiro atual.</p>
+  <div class="box"><h3>Reserve com antecedência</h3><ul>${res.join('')||'<li>Nenhum restaurante com reserva no roteiro atual.</li>'}</ul><p style="margin-top:8px">Ingressos: Maria Fumaça, Brilho de Natal, Grande Desfile e Nativitaten.</p></div>
+  <div class="box"><h3>Datas dos espetáculos nesta semana</h3><ul><li>Grande Desfile: 18, 20 e 22/12, às 20h</li><li>Nativitaten: 17, 19 e 21/12, às 20h</li><li>Brilho do Natal: 15h e 18h de sexta a domingo, só 18h na quinta</li><li>Descida do Papai Noel: 18 a 21/12, às 20h30</li><li>Maria Fumaça: terça a domingo, primeiro trem às 9h</li></ul></div>
+  <div class="box"><h3>Rafael, 11 meses</h3><p>Canguru para SkyGlass, Bondinhos e Florybal. Carrinho compacto para Mini Mundo, Lago Negro e Rua Coberta.</p></div>
+  <div class="box"><h3>Trânsito de dezembro</h3><p>Os deslocamentos já contam com a alta temporada. Saídas noturnas de Gramado para Canela costumam ser as mais lentas.</p></div>
+  <div class="box"><h3>Onde ficam as suas mudanças</h3><p>As alterações feitas aqui ficam salvas neste aparelho e neste navegador. Em outro celular, o roteiro aparece na versão original.</p>
+  <p style="margin-top:10px"><button class="btn danger" id="reset">Restaurar roteiro original</button></p></div>
+  <div class="box src"><h3>Fontes consultadas em 02/11/2026</h3><ul>
+  <li><a href="https://natalluz.ingressos.com.br/programacao" target="_blank" rel="noopener">Programação oficial do Natal Luz</a></li>
+  <li><a href="https://sonhodenatal.com.br/" target="_blank" rel="noopener">Programação oficial do Sonho de Natal</a></li>
+  <li><a href="https://giordaniturismo.com.br/passeios/nossos-horarios/" target="_blank" rel="noopener">Giordani Turismo: horários da Maria Fumaça</a></li>
+  <li><a href="https://eradofogo.com.br/" target="_blank" rel="noopener">Era do Fogo: sessões</a></li>
+  <li><a href="https://www.melhoresdestinos.com.br/gramado-novo-restaurante-tematico-famiglia-pierre.html" target="_blank" rel="noopener">Famiglia Pierre</a></li>
+  </ul><p style="margin-top:8px">Horários podem mudar sem aviso. Confira na véspera de cada atração.</p></div></section>`}
+
+/* Folha para mover ou reativar */
+function openSheet(id,mode){
+  const removed=S.removed.find(r=>r.id===id);
+  let fromDay=removed?removed.day:DL.find(d=>S.order[d].includes(id));
+  let day=fromDay;
+  const fx=fixedOf(id),it=ITEMS[id];
+  let pos=null;
+  if(removed){pos=Math.max(0,removed.index)}else{pos=S.order[fromDay].indexOf(id)}
+  const layer=document.getElementById('layer');
+  const draw=()=>{
+    const others=S.order[day].filter(x=>x!==id);
+    const rows=compute(day).filter(r=>r.id!==id);
+    const defPos=day===fromDay?Math.min(pos,others.length):others.length-(others.length&&ITEMS[others[others.length-1]].home?1:0);
+    const opts=['<option value="0">No início do dia</option>'].concat(rows.map((r,i)=>`<option value="${i+1}">Depois de ${hm(r.start)} · ${esc(r.it.title)}</option>`)).join('');
+    layer.innerHTML=`<div class="scrim" data-close></div><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-t"><div class="in">
+      <h2 id="sh-t">${mode==='restore'?'Reativar':'Mover'}: ${esc(it.title)}</h2>
+      <div><div class="lbl">Dia</div><div class="seg">${DAYS.map(x=>`<button data-sday="${x.d}" aria-pressed="${x.d===day}"><b>${x.d}</b><small>${x.wd}</small></button>`).join('')}</div></div>
+      <div><label class="lbl" for="sh-pos">Posição</label><select id="sh-pos">${opts}</select></div>
+      <div><div class="lbl">Horário</div><div class="radio">
+        <label><input type="radio" name="sh-mode" id="sh-seq" value="seq" ${fx?'':'checked'}> Seguir a sequência do dia</label>
+        <label><input type="radio" name="sh-mode" id="sh-fix" value="fix" ${fx?'checked':''}> Começar às <input type="time" id="sh-time" value="${fx||'10:00'}" step="300"></label>
+      </div>${it.fixed?`<p style="margin:6px 0 0;color:var(--muted);font-size:13px">Horário oficial: ${it.fixed}${it.days?' · datas: '+it.days.map(x=>x+'/12').join(', '):''}</p>`:''}</div>
+      <div class="foot"><button class="btn ghost" data-close>Cancelar</button><button class="btn" id="sh-ok">${mode==='restore'?'Reativar':'Mover'}</button></div></div></div>`;
+    layer.querySelector('#sh-pos').value=String(defPos);
+    layer.querySelector('#sh-time').addEventListener('input',()=>{layer.querySelector('#sh-fix').checked=true});
+  };
+  draw();
+  layer.onclick=e=>{
+    const t=e.target.closest('[data-sday],[data-close],#sh-ok');if(!t)return;
+    if(t.dataset.sday){pos=Number(layer.querySelector('#sh-pos').value);day=t.dataset.sday;draw();return}
+    if(t.hasAttribute('data-close')){layer.innerHTML='';return}
+    const before=snap();
+    const p=Number(layer.querySelector('#sh-pos').value);
+    DL.forEach(d=>S.order[d]=S.order[d].filter(x=>x!==id));S.removed=S.removed.filter(r=>r.id!==id);
+    S.order[day].splice(p,0,id);
+    if(layer.querySelector('#sh-fix').checked){const v=layer.querySelector('#sh-time').value;if(v)S.fixed[id]=v}else S.fixed[id]=null;
+    save();layer.innerHTML='';cur=day;tab='roteiro';remember();render();window.scrollTo(0,0);
+    toast(mode==='restore'?`Reativado em ${day}/12`:`Movido para ${day}/12`,before)};
+  setTimeout(()=>layer.querySelector('#sh-ok')&&layer.querySelector('#sh-ok').focus(),30);
+}
+
+function del(id){const before=snap();const d=DL.find(x=>S.order[x].includes(id));const i=S.order[d].indexOf(id);
+  S.order[d].splice(i,1);S.removed.unshift({id,day:d,index:i});save();render();toast('Evento excluído',before)}
+
+let tt=null;
+function toast(msg,before){const old=document.querySelector('.toast');if(old)old.remove();clearTimeout(tt);
+  const el=document.createElement('div');el.className='toast';el.setAttribute('role','status');
+  el.innerHTML=`<span>${esc(msg)}</span>${before?'<button>Desfazer</button>':''}`;document.body.appendChild(el);
+  if(before)el.querySelector('button').onclick=()=>{S=before;save();render();el.remove()};
+  tt=setTimeout(()=>el.remove(),5000)}
+const remember=()=>{try{localStorage.setItem(KEY+'-day',cur)}catch(e){}};
+
+/* Deslizar para revelar ações */
+const OPEN=-152;let open=null,sw=null;
+function closeOpen(){if(open){open.style.transform='';open=null}}
+document.addEventListener('pointerdown',e=>{
+  const card=e.target.closest('.card[data-card]');
+  if(open&&!e.target.closest('.swipe')){closeOpen()}
+  if(!card||!card.dataset.card||e.target.closest('.grip,button,a'))return;
+  if(open&&open!==card)closeOpen();
+  sw={card,x:e.clientX,y:e.clientY,base:card===open?OPEN:0,dx:0,active:false,id:e.pointerId}});
+document.addEventListener('pointermove',e=>{if(!sw||e.pointerId!==sw.id)return;
+  const dx=e.clientX-sw.x,dy=e.clientY-sw.y;
+  if(!sw.active){if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(dy)*1.2){sw.active=true;sw.card.classList.add('dragging');try{sw.card.setPointerCapture(e.pointerId)}catch(_){}}else if(Math.abs(dy)>10){sw=null;return}else return}
+  sw.dx=dx;const x=Math.min(0,Math.max(OPEN-40,sw.base+dx));sw.card.style.transform=`translateX(${x}px)`});
+function endSwipe(e){if(!sw||e.pointerId!==sw.id)return;const s=sw;sw=null;if(!s.active)return;s.card.classList.remove('dragging');
+  const x=s.base+s.dx;if(x<OPEN/2){s.card.style.transform=`translateX(${OPEN}px)`;open=s.card}else{s.card.style.transform='';if(open===s.card)open=null}}
+document.addEventListener('pointerup',endSwipe);document.addEventListener('pointercancel',endSwipe);
+
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-day],[data-more],[data-move],[data-del],[data-restore],#reset,#tab-roteiro,#tab-excluidos,#tab-infos');if(!t)return;
+  if(t.dataset.day){cur=t.dataset.day;remember();closeOpen();render();window.scrollTo(0,0);return}
+  if(t.dataset.more){const c=t.closest('.card');if(open===c)closeOpen();else{closeOpen();c.style.transform=`translateX(${OPEN}px)`;open=c}return}
+  if(t.dataset.move){closeOpen();openSheet(t.dataset.move,'move');return}
+  if(t.dataset.del){closeOpen();del(t.dataset.del);return}
+  if(t.dataset.restore){openSheet(t.dataset.restore,'restore');return}
+  if(t.id==='reset'){if(t.dataset.confirm){const before=snap();S=defaults();save();tab='roteiro';cur=DL[0];remember();render();window.scrollTo(0,0);toast('Roteiro original restaurado',before)}
+    else{t.dataset.confirm='1';t.textContent='Toque de novo para confirmar'}return}
+  if(t.id.startsWith('tab-')){tab=t.id.slice(4);closeOpen();render();window.scrollTo(0,0)}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('layer').innerHTML='';closeOpen()}});
+
+render();
+window.addEventListener('load',()=>window.scrollTo(0,0));
+})();
+</script>
 
 </body>
 </html>
